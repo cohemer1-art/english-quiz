@@ -54,6 +54,10 @@ button:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 .wopt{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:1.15rem}
 .oe{font-size:2.6rem;line-height:1.1}
 #rec{display:flex;flex-direction:column;gap:8px}
+.orow{display:flex;gap:8px;align-items:stretch}.orow .opt{flex:1}
+.spk{background:var(--sky);padding:0 14px;font-size:1.3rem;border-radius:16px;min-width:56px}
+.tr{background:var(--leaf2);border-radius:14px;padding:10px 14px;text-align:center;font-size:1.15rem;display:flex;flex-direction:column;gap:4px}
+.tr:empty{display:none}
 </style>
 
 </head>
@@ -88,7 +92,7 @@ const TR={"This is my family.":"זו המשפחה שלי.","I am in the fourth g
 let NAME='';
 function chime(){try{const c=new (window.AudioContext||window.webkitAudioContext)();[660,880,1320].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain(),t=c.currentTime+i*.12;o.frequency.value=f;o.connect(g);g.connect(c.destination);g.gain.setValueAtTime(.15,t);g.gain.exponentialRampToValueAtTime(.001,t+.2);o.start(t);o.stop(t+.22)})}catch(e){}}
 function win(msg,first){chime();msg.innerHTML=`<span class="pop">${first?`🎉 כל הכבוד ${NAME}! 🎉`:`👍 נכון! הפעם הצלחת, ${NAME}`}</span>`}
-const QA=[["What’s your name?","My name is Dan."],["How old are you?","I am nine years old."],["Where do you live?","I live in Haifa."]];
+const QA=[["What’s your name?","My name is Dan.","🏷️","מה השם שלך?","השם שלי הוא דן."],["How old are you?","I am nine years old.","🎂","בן/בת כמה את/ה?","אני בן/בת תשע."],["Where do you live?","I live in Haifa.","🏠","איפה את/ה גר/ה?","אני גר/ה בחיפה."]];
 const LN={a:'ay',b:'bee',c:'see',d:'dee',e:'ee',f:'eff',g:'jee',h:'aitch',i:'eye',j:'jay',k:'kay',l:'el',m:'em',n:'en',o:'oh',p:'pee',q:'cue',r:'ar',s:'ess',t:'tee',u:'you',v:'vee',w:'double you',x:'ex',y:'why',z:'zee'};
 const app=document.getElementById('app');
 const sh=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
@@ -231,8 +235,8 @@ function wq(){
 function quiz(){
   tok++;const r=[];
   QA.forEach(p=>{
-    r.push({show:p[0],say:p[0],right:p[1],opts:sh(QA.map(x=>x[1])),ask:'מה התשובה המתאימה לשאלה?'});
-    r.push({show:p[1],say:p[1],right:p[0],opts:sh(QA.map(x=>x[0])),ask:'מה השאלה המתאימה לתשובה?'});
+    r.push({p,show:p[0],say:p[0],right:p[1],opts:sh(QA.map(x=>x[1])),ask:'מה התשובה המתאימה לשאלה?'});
+    r.push({p,show:p[1],say:p[1],right:p[0],opts:sh(QA.map(x=>x[0])),ask:'מה השאלה המתאימה לתשובה?'});
   });
   Q={mode:'q',r:sh(r),i:0,ok:0};rnd();
 }
@@ -240,17 +244,18 @@ function rnd(){
   const q=Q.r[Q.i];q.first=null;
   app.innerHTML=`<div class="top"><button class="ghost" onclick="home()">→ תפריט</button><span>${Q.i+1} / ${Q.r.length}</span></div>
   <p class="prompt">${q.ask}</p>
-  <div class="card"><div class="en" style="font-size:${q.show.length>14?'1.7rem':'2.4rem'}" lang="en">${q.show}</div><button class="ghost" onclick="tok++;say(Q.r[Q.i].say,.8)">🔊 להקשיב</button></div>
-  <div class="opts">${q.opts.map(o=>`<button class="opt en2" data-v="${o}">${o}</button>`).join('')}</div>
-  <p class="msg" id="msg"></p><div class="nav" id="nx"></div>`;
+  <div class="card"><div class="pic" style="font-size:3.6rem">${q.p[2]}</div><div class="en" style="font-size:${q.show.length>14?'1.7rem':'2.4rem'}" lang="en">${q.show}</div><button class="ghost" onclick="tok++;say(Q.r[Q.i].say,.8)">🔊 להקשיב</button></div>
+  <div class="opts">${q.opts.map(o=>`<div class="orow"><button class="spk" data-s="${o}" aria-label="להקשיב">🔊</button><button class="opt en2" data-v="${o}">${o}</button></div>`).join('')}</div>
+  <p class="msg" id="msg"></p><div class="tr" id="tr"></div><div class="nav" id="nx"></div>`;
   app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>pick(b,q));
+  app.querySelectorAll('.spk').forEach(b=>b.onclick=()=>{tok++;say(b.dataset.s,.8)});
   setTimeout(()=>say(q.say,.8),250);
 }
 function pick(b,q){
   const ok=b.dataset.v===q.right,msg=document.getElementById('msg');
   if(q.first===null){q.first=ok;if(ok)Q.ok++}
   if(ok){
-    b.classList.add('ok');app.querySelectorAll('.opt').forEach(x=>x.disabled=true);win(msg,q.first);say(q.right,.8);
+    b.classList.add('ok');app.querySelectorAll('.opt').forEach(x=>x.disabled=true);win(msg,q.first);document.getElementById('tr').innerHTML=`<div>❓ ${q.p[3]}</div><div>💬 ${q.p[4]}</div>`;say(q.right,.8);
     const last=Q.i===Q.r.length-1;
     showNext(last?'fin()':'Q.i++;rnd()',last?'לסיכום 🏁':'הבא ←');
   }else{b.classList.add('bad');b.disabled=true;msg.textContent='לא בדיוק, נסו תשובה אחרת 🙂'}

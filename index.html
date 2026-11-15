@@ -249,7 +249,7 @@ function tq(){
   <p class="msg" id="msg"></p><div class="nav" id="nx"></div>`;
   const cv=document.getElementById('cv'),msg=document.getElementById('msg');
   const W=cv.clientWidth||320,H=200;cv.width=W;cv.height=H;
-  const cx=cv.getContext('2d'),icv=document.createElement('canvas');icv.width=W;icv.height=H;const ic=icv.getContext('2d');
+  const cx=cv.getContext('2d'),icv=document.createElement('canvas');icv.width=W;icv.height=H;const ic=icv.getContext('2d'),icw=document.createElement('canvas');icw.width=W;icw.height=H;const iw=icw.getContext('2d');
   const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim()||'#888';
   const font=f=>`bold ${f}px system-ui,Arial,sans-serif`;
   const m0=document.createElement('canvas').getContext('2d');let fs=140;
@@ -257,20 +257,20 @@ function tq(){
   const mask=stroke=>{const c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
     x.font=font(fs);x.textAlign='center';x.textBaseline='middle';x.fillStyle=x.strokeStyle='#000';x.lineJoin='round';
     if(stroke){x.lineWidth=stroke;x.strokeText(word,W/2,H/2)}x.fillText(word,W/2,H/2);return x.getImageData(0,0,W,H).data};
-  const tgt=mask(0),tol=mask(fs*.14),bw=Math.max(10,fs*.16),inkc=css('--berry');
+  const tgt=mask(0),tol=mask(fs*.14),bw=Math.max(5,fs*.08),bwc=Math.max(10,fs*.16),inkc=css('--berry');
   let fails=0,down=false,done=false,lx=0,ly=0;
   const guide=()=>{cx.clearRect(0,0,W,H);cx.save();cx.globalAlpha=fails>=3?.55:.28;cx.fillStyle=css('--mut');cx.font=font(fs);cx.textAlign='center';cx.textBaseline='middle';cx.fillText(word,W/2,H/2);cx.restore();cx.drawImage(icv,0,0)};
   guide();
   const pos=e=>{const r=cv.getBoundingClientRect();return[(e.clientX-r.left)*W/r.width,(e.clientY-r.top)*H/r.height]};
-  const seg=(a,b,c,d2)=>{for(const k of[cx,ic]){k.strokeStyle=inkc;k.lineWidth=bw;k.lineCap=k.lineJoin='round';k.beginPath();k.moveTo(a,b);k.lineTo(c,d2);k.stroke()}};
+  const seg=(a,b,c,d2)=>{for(const[k,w] of[[cx,bw],[ic,bw],[iw,bwc]]){k.strokeStyle=inkc;k.lineWidth=w;k.lineCap=k.lineJoin='round';k.beginPath();k.moveTo(a,b);k.lineTo(c,d2);k.stroke()}};
   cv.onpointerdown=e=>{if(done)return;down=true;[lx,ly]=pos(e);seg(lx,ly,lx,ly);try{cv.setPointerCapture(e.pointerId)}catch(x){}e.preventDefault()};
   cv.onpointermove=e=>{if(!down||done)return;const[x,y]=pos(e);seg(lx,ly,x,y);lx=x;ly=y;e.preventDefault()};
   cv.onpointerup=cv.onpointercancel=()=>{down=false};
-  document.getElementById('clr').onclick=()=>{if(done)return;ic.clearRect(0,0,W,H);guide();msg.textContent=''};
+  document.getElementById('clr').onclick=()=>{if(done)return;ic.clearRect(0,0,W,H);iw.clearRect(0,0,W,H);guide();msg.textContent=''};
   document.getElementById('chk').onclick=()=>{
     if(done)return;
-    const ink=ic.getImageData(0,0,W,H).data;let t=0,c=0,n=0,inn=0;
-    for(let i=3;i<ink.length;i+=4){const a=ink[i]>40,tg=tgt[i]>100;if(tg){t++;if(a)c++}if(a){n++;if(tol[i]>100)inn++}}
+    const ink=ic.getImageData(0,0,W,H).data,wide=iw.getImageData(0,0,W,H).data;let t=0,c=0,n=0,inn=0;
+    for(let i=3;i<ink.length;i+=4){const a=ink[i]>40,tg=tgt[i]>100;if(tg){t++;if(wide[i]>40)c++}if(a){n++;if(tol[i]>100)inn++}}
     const cov=c/t,prec=n?inn/n:0;
     if(cov>=.7&&prec>=.75){
       done=true;document.getElementById('chk').disabled=true;document.getElementById('clr').disabled=true;

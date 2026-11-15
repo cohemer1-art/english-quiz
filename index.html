@@ -58,6 +58,11 @@ button:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 .spk{background:var(--sky);padding:0 14px;font-size:1.3rem;border-radius:16px;min-width:56px}
 .tr{background:var(--leaf2);border-radius:14px;padding:10px 14px;text-align:center;font-size:1.15rem;display:flex;flex-direction:column;gap:4px}
 .tr:empty{display:none}
+.m5{background:#7B4FC9}
+.trow{display:flex;align-items:center;justify-content:center;gap:14px}
+.cvw{background:var(--card);border:3px dashed var(--line);border-radius:20px;overflow:hidden;touch-action:none}
+#cv{display:block;width:100%;height:200px;touch-action:none}
+.chk{background:var(--leaf)}
 </style>
 
 </head>
@@ -130,6 +135,7 @@ function home(){
   <div class="menu">
   <button class="m1" onclick="learn(0)"><b>📖</b>ללמוד מילים ומשפטים</button>
   <button class="m2" onclick="wstart()"><b>🧩</b>מילים: פירוש, איות והקלטה</button>
+  <button class="m5" onclick="tstart()"><b>✏️</b>כתיבה באצבע</button>
   <button class="m4" onclick="quiz('q')"><b>💬</b>שאלה ← תשובה</button><button class="ghost" onclick="nameScreen()">👤 לא ${NAME}? להחליף שם</button></div>`;
 }
 const ALIKE={meet:['meat'],need:['knead','kneed'],write:['right','rite'],house:['hause'],grade:['grayed'],learn:['lern']};
@@ -231,6 +237,52 @@ function wq(){
   });
   setTimeout(()=>say(spoken(d),.8),250);
 }
+// Writing: the child traces the word with a finger; it is checked by how much of the letters is covered and how much stays inside them
+function tstart(){tok++;Q={mode:'t',r:sh(WORDS).slice(0,10),i:0,ok:0};tq()}
+function tq(){
+  tok++;const d=Q.r[Q.i],word=d[0],idx=D.indexOf(d),last=Q.i===Q.r.length-1;
+  app.innerHTML=`<div class="top"><button class="ghost" onclick="home()">→ תפריט</button><span>${Q.i+1} / ${Q.r.length}</span></div>
+  <p class="prompt">כתבו את המילה באצבע, על גבי האותיות ✏️</p>
+  <div class="card"><div class="trow"><button class="spk" onclick="hearW(${idx})" aria-label="להקשיב">🔊</button><div><div class="he"><b>${d[1]}</b></div><div class="nk">${d[2]}</div></div><span style="font-size:2.6rem">${d[3]}</span></div></div>
+  <div class="cvw"><canvas id="cv"></canvas></div>
+  <div class="row"><button class="chk" id="chk">✔ בדיקה</button><button class="ghost" id="clr">🧽 למחוק</button></div>
+  <p class="msg" id="msg"></p><div class="nav" id="nx"></div>`;
+  const cv=document.getElementById('cv'),msg=document.getElementById('msg');
+  const W=cv.clientWidth||320,H=200;cv.width=W;cv.height=H;
+  const cx=cv.getContext('2d'),icv=document.createElement('canvas');icv.width=W;icv.height=H;const ic=icv.getContext('2d');
+  const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim()||'#888';
+  const font=f=>`bold ${f}px system-ui,Arial,sans-serif`;
+  const m0=document.createElement('canvas').getContext('2d');let fs=140;
+  while(fs>30){m0.font=font(fs);if(m0.measureText(word).width<=W*.88&&fs<=H*.6)break;fs-=4}
+  const mask=stroke=>{const c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+    x.font=font(fs);x.textAlign='center';x.textBaseline='middle';x.fillStyle=x.strokeStyle='#000';x.lineJoin='round';
+    if(stroke){x.lineWidth=stroke;x.strokeText(word,W/2,H/2)}x.fillText(word,W/2,H/2);return x.getImageData(0,0,W,H).data};
+  const tgt=mask(0),tol=mask(fs*.14),bw=Math.max(10,fs*.16),inkc=css('--berry');
+  let fails=0,down=false,done=false,lx=0,ly=0;
+  const guide=()=>{cx.clearRect(0,0,W,H);cx.save();cx.globalAlpha=fails>=3?.55:.28;cx.fillStyle=css('--mut');cx.font=font(fs);cx.textAlign='center';cx.textBaseline='middle';cx.fillText(word,W/2,H/2);cx.restore();cx.drawImage(icv,0,0)};
+  guide();
+  const pos=e=>{const r=cv.getBoundingClientRect();return[(e.clientX-r.left)*W/r.width,(e.clientY-r.top)*H/r.height]};
+  const seg=(a,b,c,d2)=>{for(const k of[cx,ic]){k.strokeStyle=inkc;k.lineWidth=bw;k.lineCap=k.lineJoin='round';k.beginPath();k.moveTo(a,b);k.lineTo(c,d2);k.stroke()}};
+  cv.onpointerdown=e=>{if(done)return;down=true;[lx,ly]=pos(e);seg(lx,ly,lx,ly);try{cv.setPointerCapture(e.pointerId)}catch(x){}e.preventDefault()};
+  cv.onpointermove=e=>{if(!down||done)return;const[x,y]=pos(e);seg(lx,ly,x,y);lx=x;ly=y;e.preventDefault()};
+  cv.onpointerup=cv.onpointercancel=()=>{down=false};
+  document.getElementById('clr').onclick=()=>{if(done)return;ic.clearRect(0,0,W,H);guide();msg.textContent=''};
+  document.getElementById('chk').onclick=()=>{
+    if(done)return;
+    const ink=ic.getImageData(0,0,W,H).data;let t=0,c=0,n=0,inn=0;
+    for(let i=3;i<ink.length;i+=4){const a=ink[i]>40,tg=tgt[i]>100;if(tg){t++;if(a)c++}if(a){n++;if(tol[i]>100)inn++}}
+    const cov=c/t,prec=n?inn/n:0;
+    if(cov>=.7&&prec>=.75){
+      done=true;document.getElementById('chk').disabled=true;document.getElementById('clr').disabled=true;
+      if(fails===0)Q.ok++;win(msg,fails===0);tok++;say(spoken(d),.8);
+      showNext(last?'fin()':'Q.i++;tq()',last?'לסיכום 🏁':'המילה הבאה ←');
+    }else{
+      fails++;
+      msg.textContent=n<t*.05?'עוד לא כתבתם כלום. עברו באצבע על האותיות 🙂':cov<.7?'כמעט! עברו על כל האותיות, עד הסוף ✨':'נסו להישאר בתוך האותיות 💪';
+      if(fails===3){guide();msg.textContent+=' (הדגשתי את האותיות)'}
+    }
+  };
+}
 // Question ↔ answer
 function quiz(){
   tok++;const r=[];
@@ -263,7 +315,7 @@ function pick(b,q){
 function fin(){
   const n=Q.r.length,m=Q.mode;
   app.innerHTML=`<div class="big">🏆</div><h1>כל הכבוד ${NAME}!</h1><p class="sub">נכון בניסיון ראשון: ${Q.ok} מתוך ${n}</p>
-  <div class="menu"><button class="m4" onclick="${m==='w'?'wstart()':'quiz()'}">עוד סיבוב</button><button class="m1" onclick="learn(0)">חזרה ללמוד</button><button class="ghost" onclick="home()">לתפריט</button></div>`;
+  <div class="menu"><button class="m4" onclick="${m==='w'?'wstart()':m==='t'?'tstart()':'quiz()'}">עוד סיבוב</button><button class="m1" onclick="learn(0)">חזרה ללמוד</button><button class="ghost" onclick="home()">לתפריט</button></div>`;
 }
 try{speechSynthesis.getVoices()}catch(e){}
 nameScreen();

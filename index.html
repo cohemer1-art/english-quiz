@@ -98,7 +98,7 @@ let NAME='';
 function chime(){try{const c=new (window.AudioContext||window.webkitAudioContext)();[660,880,1320].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain(),t=c.currentTime+i*.12;o.frequency.value=f;o.connect(g);g.connect(c.destination);g.gain.setValueAtTime(.15,t);g.gain.exponentialRampToValueAtTime(.001,t+.2);o.start(t);o.stop(t+.22)})}catch(e){}}
 function win(msg,first){chime();msg.innerHTML=`<span class="pop">${first?`🎉 כל הכבוד ${NAME}! 🎉`:`👍 נכון! הפעם הצלחת, ${NAME}`}</span>`}
 const QA=[["What’s your name?","My name is Dan.","🏷️","מה השם שלך?","השם שלי הוא דן."],["How old are you?","I am nine years old.","🎂","בן/בת כמה את/ה?","אני בן/בת תשע."],["Where do you live?","I live in Haifa.","🏠","איפה את/ה גר/ה?","אני גר/ה בחיפה."]];
-const LN={a:'ay',b:'bee',c:'see',d:'dee',e:'ee',f:'eff',g:'jee',h:'aitch',i:'eye',j:'jay',k:'kay',l:'el',m:'em',n:'en',o:'oh',p:'pee',q:'cue',r:'ar',s:'ess',t:'tee',u:'you',v:'vee',w:'double you',x:'ex',y:'why',z:'zee'};
+const LN={a:'A.',b:'bee',c:'see',d:'dee',e:'ee',f:'eff',g:'jee',h:'aitch',i:'eye',j:'jay',k:'kay',l:'el',m:'em',n:'en',o:'oh',p:'pee',q:'cue',r:'ar',s:'ess',t:'tee',u:'you',v:'vee',w:'double you',x:'ex',y:'why',z:'zee'};
 const app=document.getElementById('app');
 const sh=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
 let tok=0;

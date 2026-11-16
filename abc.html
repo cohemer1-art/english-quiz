@@ -63,7 +63,7 @@ button:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 <script>
 // [letter, word, picture, Hebrew meaning]
 const L=[["a","apple","🍎","תפוח"],["b","ball","⚽","כדור"],["c","cat","🐱","חתול"],["d","dog","🐶","כלב"],["e","elephant","🐘","פיל"],["f","fish","🐟","דג"],["g","giraffe","🦒","ג’ירפה"],["h","house","🏠","בית"],["i","ice","🧊","קרח"],["j","juice","🧃","מיץ"],["k","kite","🪁","עפיפון"],["l","lion","🦁","אריה"],["m","monkey","🐵","קוף"],["n","nose","👃","אף"],["o","orange","🍊","תפוז"],["p","pizza","🍕","פיצה"],["q","queen","👑","מלכה"],["r","rabbit","🐰","ארנב"],["s","sun","☀️","שמש"],["t","tree","🌳","עץ"],["u","umbrella","☂️","מטרייה"],["v","violin","🎻","כינור"],["w","watch","⌚","שעון"],["x","xylophone","🎶","קסילופון"],["y","yellow","🟡","צהוב"],["z","zebra","🦓","זברה"]];
-const NM={a:'ay',b:'bee',c:'see',d:'dee',e:'ee',f:'eff',g:'jee',h:'aitch',i:'eye',j:'jay',k:'kay',l:'el',m:'em',n:'en',o:'oh',p:'pee',q:'cue',r:'ar',s:'ess',t:'tee',u:'you',v:'vee',w:'double you',x:'ex',y:'why',z:'zee'};
+const NM={a:'A.',b:'bee',c:'see',d:'dee',e:'ee',f:'eff',g:'jee',h:'aitch',i:'eye',j:'jay',k:'kay',l:'el',m:'em',n:'en',o:'oh',p:'pee',q:'cue',r:'ar',s:'ess',t:'tee',u:'you',v:'vee',w:'double you',x:'ex',y:'why',z:'zee'};
 const app=document.getElementById('app'),$=id=>document.getElementById(id);
 const sh=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
 let tok=0,NAME='',Q=null;

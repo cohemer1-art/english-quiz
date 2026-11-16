@@ -10,7 +10,7 @@
 :root[data-theme="dark"]{--bg:#0F1D17;--card:#172A22;--ink:#E6F2EA;--mut:#9BB6A6;--line:#2A4236;--leaf:#4BC283;--leaf2:#1E3D2E;--sun:#FFD15C;--sun2:#3A3218;--berry:#F0779A;--berry2:#43202C;--sky:#7FADF0;--sky2:#1C2E4A;color-scheme:dark}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.45 system-ui,"Segoe UI",Arial,sans-serif}
-#app{max-width:560px;margin:0 auto;padding:14px;display:flex;flex-direction:column;gap:12px;min-height:100vh;box-sizing:border-box}
+#app{max-width:560px;margin:0 auto;padding:14px;display:flex;flex-direction:column;gap:12px;min-height:calc(100vh - 44px);box-sizing:border-box}
 h1{font-size:1.6rem;margin:6px 0;text-align:center}
 .sub{color:var(--mut);text-align:center;margin:0}
 button{font:inherit;font-weight:700;border:0;border-radius:16px;padding:14px 16px;cursor:pointer;background:var(--leaf);color:#fff;touch-action:manipulation}
@@ -63,11 +63,15 @@ button:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 .cvw{background:var(--card);border:3px dashed var(--line);border-radius:20px;overflow:hidden;touch-action:none}
 #cv{display:block;width:100%;height:200px;touch-action:none}
 .chk{background:var(--leaf)}
+.ttl{font-size:1.35rem;line-height:1.4}
+.ft{text-align:center;font-size:.75rem;color:var(--mut);padding:0 0 calc(10px + env(safe-area-inset-bottom,0px))}
+.score{font-size:1.3rem;color:inherit;text-align:center;margin:0}
 </style>
 
 </head>
 <body>
 <div id="app"></div>
+<footer class="ft">נערך ע״י מירב כהן</footer>
 <script>
 // [English, Hebrew, nikud, picture, short sentence, spoken text (if different)]
 const D=[
@@ -122,7 +126,7 @@ function spell(i){
 }
 function nameScreen(){
   tok++;
-  app.innerHTML=`<div class="big">👋</div><h1>שלום! איך קוראים לך?</h1><p class="sub">כתבו את השם ולחצו על הכפתור</p>
+  app.innerHTML=`<div class="big">👋</div><h1 class="ttl">מבדק מס’ 2 – שכבה ד’<br>בית החינוך ע״ש שמעון פרס</h1><p class="sub" style="font-size:1.35rem;color:inherit;font-weight:700">שלום! איך קוראים לך?</p><p class="sub">כתבו את השם ולחצו על הכפתור</p>
   <input class="nm" id="nm" maxlength="15" autocomplete="off" value="${NAME}" placeholder="השם שלך">
   <p class="msg" id="nmsg"></p><button id="go" style="font-size:1.3rem">בואו נתחיל ←</button>`;
   const go=()=>{const v=document.getElementById('nm').value.replace(/[<>&"]/g,'').trim().slice(0,15);if(!v){document.getElementById('nmsg').textContent='צריך לכתוב שם 🙂';return}NAME=v;home()};
@@ -183,7 +187,7 @@ function recStep(target,done){
 }
 // Learn: sentence translation (4 options), then record the sentence
 function learn(i){
-  tok++;const d=D[i],w=i>5,S=w?d[4]:spoken(d),T=w?TR[d[4]]:d[1];
+  if(i===0)LS={ok:0};tok++;const d=D[i],w=i>5,S=w?d[4]:spoken(d),T=w?TR[d[4]]:d[1];
   const pool=w?Object.values(TR):D.slice(0,6).map(x=>x[1]);
   const opts=sh([T,...sh(pool.filter(x=>x!==T)).slice(0,3)]);
   const sent=w?`<div class="sent" lang="en">${d[4].replace(new RegExp('\\b'+d[0]+'\\b','i'),m=>`<b>${m}</b>`)}</div>`:'';
@@ -196,8 +200,8 @@ function learn(i){
   const msg=document.getElementById('msg');let first=true;
   app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
     if(b.dataset.v===T){
-      b.classList.add('ok');app.querySelectorAll('.opt').forEach(x=>x.disabled=true);win(msg,first);
-      const last=i>=D.length-1;recStep(S,()=>showNext(last?'home()':`learn(${i+1})`,last?'לתפריט':'המשפט הבא ←'));
+      b.classList.add('ok');app.querySelectorAll('.opt').forEach(x=>x.disabled=true);if(first)LS.ok++;win(msg,first);
+      const last=i>=D.length-1;recStep(S,()=>showNext(last?'lfin()':`learn(${i+1})`,last?'לסיכום 🏁':'המשפט הבא ←'));
     }else{first=false;b.classList.add('bad');b.disabled=true;msg.textContent='לא בדיוק, נסו תשובה אחרת 🙂'}
   });
   setTimeout(()=>say(S,.8),250);
@@ -312,9 +316,16 @@ function pick(b,q){
     showNext(last?'fin()':'Q.i++;rnd()',last?'לסיכום 🏁':'הבא ←');
   }else{b.classList.add('bad');b.disabled=true;msg.textContent='לא בדיוק, נסו תשובה אחרת 🙂'}
 }
+const TP={w:"מילים: פירוש, איות והקלטה",t:"כתיבה באצבע",q:"שאלה ← תשובה"};
+let LS={ok:0};
+function lfin(){
+  const n=D.length;
+  app.innerHTML=`<div class="big">🏆</div><h1>כל הכבוד ${NAME}!</h1><p class="score">בנושא ללמוד מילים ומשפטים:<br>ענית נכון בניסיון הראשון על <b>${LS.ok}</b> מתוך <b>${n}</b> שאלות</p>
+  <div class="menu"><button class="m1" onclick="learn(0)">עוד סיבוב</button><button class="ghost" onclick="home()">לתפריט</button></div>`;
+}
 function fin(){
   const n=Q.r.length,m=Q.mode;
-  app.innerHTML=`<div class="big">🏆</div><h1>כל הכבוד ${NAME}!</h1><p class="sub">נכון בניסיון ראשון: ${Q.ok} מתוך ${n}</p>
+  app.innerHTML=`<div class="big">🏆</div><h1>כל הכבוד ${NAME}!</h1><p class="score">בנושא ${TP[m]}:<br>ענית נכון בניסיון הראשון על <b>${Q.ok}</b> מתוך <b>${n}</b> שאלות</p>
   <div class="menu"><button class="m4" onclick="${m==='w'?'wstart()':m==='t'?'tstart()':'quiz()'}">עוד סיבוב</button><button class="m1" onclick="learn(0)">חזרה ללמוד</button><button class="ghost" onclick="home()">לתפריט</button></div>`;
 }
 try{speechSynthesis.getVoices()}catch(e){}

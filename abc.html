@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>לומדים את ה-a,b,c</title>
+<style>
+:root{--bg:#EAF4EE;--card:#fff;--ink:#1B3227;--mut:#58715F;--line:#CDE1D4;--leaf:#23905A;--leaf2:#D6EEDF;--sun:#FFC53A;--sun2:#FFF1C9;--berry:#D9416B;--berry2:#FBE0E8;--sky:#2F6FD0;--sky2:#DCE8FA;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0F1D17;--card:#172A22;--ink:#E6F2EA;--mut:#9BB6A6;--line:#2A4236;--leaf:#4BC283;--leaf2:#1E3D2E;--sun:#FFD15C;--sun2:#3A3218;--berry:#F0779A;--berry2:#43202C;--sky:#7FADF0;--sky2:#1C2E4A;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0F1D17;--card:#172A22;--ink:#E6F2EA;--mut:#9BB6A6;--line:#2A4236;--leaf:#4BC283;--leaf2:#1E3D2E;--sun:#FFD15C;--sun2:#3A3218;--berry:#F0779A;--berry2:#43202C;--sky:#7FADF0;--sky2:#1C2E4A;color-scheme:dark}
+body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.45 system-ui,"Segoe UI",Arial,sans-serif}
+#app{max-width:560px;margin:0 auto;padding:14px;display:flex;flex-direction:column;gap:12px;min-height:100vh;box-sizing:border-box}
+h1{font-size:1.6rem;margin:6px 0;text-align:center}
+.sub{color:var(--mut);text-align:center;margin:0}
+button{font:inherit;font-weight:700;border:0;border-radius:16px;padding:14px 16px;cursor:pointer;background:var(--leaf);color:#fff;touch-action:manipulation}
+button:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.ghost{background:transparent;color:var(--leaf);border:2px solid var(--leaf);padding:8px 14px}
+.menu{display:grid;gap:10px}
+.menu button{display:flex;align-items:center;gap:12px;font-size:1.15rem;text-align:start}
+.menu b{font-size:1.9rem}
+.m1{background:var(--sky)}.m2{background:var(--berry)}.m3{background:#C98A00}.m4{background:#7B4FC9}
+.top{display:flex;justify-content:space-between;align-items:center;color:var(--mut)}
+.card{background:var(--card);border:2px solid var(--line);border-radius:24px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.pic{font-size:5rem;line-height:1.1}
+.lt2{font-size:4.6rem;font-weight:800;direction:ltr;line-height:1.1}
+.en2{font-size:2.4rem;font-weight:800;direction:ltr}
+.fl{color:var(--berry);font-size:1.25em}
+.he{font-size:1.3rem;color:var(--mut)}
+.row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.row button{background:var(--sky);padding:10px 14px}
+.nav{display:flex;justify-content:space-between;gap:10px}
+.nav button{flex:1}
+.prompt{text-align:center;color:var(--mut);margin:0}
+.opts{display:grid;gap:10px}
+.orow{display:flex;gap:8px;align-items:stretch}
+.orow .opt{flex:1}
+.spk{background:var(--sky);padding:0 14px;font-size:1.3rem;min-width:56px}
+.opt{background:var(--card);color:var(--ink);border:3px solid var(--line);font-size:2rem;direction:ltr}
+.opt.ok{background:var(--leaf);border-color:var(--leaf);color:#fff}
+.opt.bad{background:var(--berry2);border-color:var(--berry);color:var(--berry);text-decoration:line-through}
+.msg{text-align:center;font-weight:700;min-height:1.5em;margin:0}
+.tr{background:var(--leaf2);border-radius:14px;padding:10px 14px;text-align:center;font-size:1.15rem}
+.tr:empty{display:none}
+.big{font-size:3rem;text-align:center}
+.pop{display:inline-block;background:var(--leaf2);color:var(--leaf);border-radius:16px;padding:8px 16px;font-size:1.25rem;animation:pop .45s ease-out}
+@keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+@media (prefers-reduced-motion:reduce){.pop{animation:none}}
+.nm{font:inherit;font-size:1.4rem;text-align:center;padding:12px;border-radius:16px;border:3px solid var(--line);background:var(--card);color:var(--ink)}
+.nm:focus{outline:none;border-color:var(--leaf)}
+.trow{display:flex;align-items:center;justify-content:center;gap:14px}
+.cvw{background:var(--card);border:3px dashed var(--line);border-radius:20px;overflow:hidden;touch-action:none}
+#cv{display:block;width:100%;height:200px;touch-action:none}
+.chk{background:var(--leaf)}
+.m5{background:var(--leaf)}
+.opts.g2{grid-template-columns:1fr 1fr}
+.bl{display:inline-block;min-width:.9em;border-bottom:.1em solid var(--berry);color:var(--berry);text-align:center}
+.micb{background:var(--berry);font-size:1.3rem;padding:16px;width:100%}
+#rec{display:flex;flex-direction:column;gap:8px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// [letter, word, picture, Hebrew meaning]
+const L=[["a","apple","🍎","תפוח"],["b","ball","⚽","כדור"],["c","cat","🐱","חתול"],["d","dog","🐶","כלב"],["e","elephant","🐘","פיל"],["f","fish","🐟","דג"],["g","giraffe","🦒","ג’ירפה"],["h","house","🏠","בית"],["i","ice","🧊","קרח"],["j","juice","🧃","מיץ"],["k","kite","🪁","עפיפון"],["l","lion","🦁","אריה"],["m","monkey","🐵","קוף"],["n","nose","👃","אף"],["o","orange","🍊","תפוז"],["p","pizza","🍕","פיצה"],["q","queen","👑","מלכה"],["r","rabbit","🐰","ארנב"],["s","sun","☀️","שמש"],["t","tree","🌳","עץ"],["u","umbrella","☂️","מטרייה"],["v","violin","🎻","כינור"],["w","watch","⌚","שעון"],["x","xylophone","🎶","קסילופון"],["y","yellow","🟡","צהוב"],["z","zebra","🦓","זברה"]];
+const NM={a:'ay',b:'bee',c:'see',d:'dee',e:'ee',f:'eff',g:'jee',h:'aitch',i:'eye',j:'jay',k:'kay',l:'el',m:'em',n:'en',o:'oh',p:'pee',q:'cue',r:'ar',s:'ess',t:'tee',u:'you',v:'vee',w:'double you',x:'ex',y:'why',z:'zee'};
+const app=document.getElementById('app'),$=id=>document.getElementById(id);
+const sh=a=>a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
+let tok=0,NAME='',Q=null;
+function say(t,rate,cb){
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=rate||.85;
+    const v=speechSynthesis.getVoices().find(v=>/^en/i.test(v.lang));if(v)u.voice=v;
+    if(cb){u.onend=cb;u.onerror=cb}
+    speechSynthesis.speak(u);
+  }catch(e){cb&&cb()}
+}
+const hl=l=>`<span class="fl">${l[1][0].toUpperCase()}</span>${l[1].slice(1)}`;
+const idx=l=>L.indexOf(l);
+function hearL(i){tok++;say(NM[L[i][0]],.8)}
+function hearW(i){tok++;say(L[i][1],.8)}
+function hearLW(i){tok++;say(NM[L[i][0]],.8,()=>setTimeout(()=>say(L[i][1],.8),200))}
+function chime(){try{const c=new (window.AudioContext||window.webkitAudioContext)();[660,880,1320].forEach((f,i)=>{const o=c.createOscillator(),g=c.createGain(),t=c.currentTime+i*.12;o.frequency.value=f;o.connect(g);g.connect(c.destination);g.gain.setValueAtTime(.15,t);g.gain.exponentialRampToValueAtTime(.001,t+.2);o.start(t);o.stop(t+.22)})}catch(e){}}
+function win(msg,first){chime();msg.innerHTML=`<span class="pop">${first?`🎉 כל הכבוד ${NAME}! 🎉`:`👍 נכון! הפעם הצלחת, ${NAME}`}</span>`}
+function showNext(js,label){$('nx').innerHTML=`<button onclick="${js}">${label}</button>`}
+
+function nameScreen(){
+  tok++;
+  app.innerHTML=`<h1>לומדים את ה-a,b,c 🔤</h1><div class="big">👋</div><p class="sub" style="font-size:1.35rem;color:inherit;font-weight:700">שלום! איך קוראים לך?</p><p class="sub">כתבו את השם ולחצו על הכפתור</p>
+  <input class="nm" id="nm" maxlength="15" autocomplete="off" value="${NAME}" placeholder="השם שלך">
+  <p class="msg" id="nmsg"></p><button id="go" style="font-size:1.3rem">בואו נתחיל ←</button>`;
+  const go=()=>{const v=$('nm').value.replace(/[<>&"]/g,'').trim().slice(0,15);if(!v){$('nmsg').textContent='צריך לכתוב שם 🙂';return}NAME=v;home()};
+  $('go').onclick=go;$('nm').onkeydown=e=>{if(e.key==='Enter')go()};
+}
+function home(){
+  tok++;try{speechSynthesis.cancel()}catch(e){}
+  app.innerHTML=`<h1>היי ${NAME}! 🔤</h1><p class="sub">לומדים את ה-a,b,c<br>לוחצים על 🔊 כדי לשמוע</p>
+  <div class="menu">
+  <button class="m1" onclick="learn(0)"><b>📖</b>ללמוד את האותיות</button>
+  <button class="m2" onclick="mstart()"><b>🔗</b>אות גדולה ← אות קטנה</button>
+  <button class="m3" onclick="wstart()"><b>🖼️</b>מילה ותמונה ← האות הראשונה</button>
+  <button class="m5" onclick="xstart()"><b>🔡</b>למצוא את האות החסרה</button>
+  <button class="m4" onclick="tstart()"><b>✏️</b>כתיבת אותיות באצבע</button></div>
+  <button class="ghost" onclick="nameScreen()">👤 לא ${NAME}? להחליף שם</button>`;
+}
+
+// Learn: capital + small letter, picture, word with its first letter highlighted
+function learn(i){
+  tok++;const l=L[i];
+  app.innerHTML=`<div class="top"><button class="ghost" onclick="home()">→ תפריט</button><span>${i+1} / ${L.length}</span></div>
+  <div class="card"><div class="lt2">${l[0].toUpperCase()} ${l[0]}</div><div class="pic">${l[2]}</div><div class="en2" lang="en">${hl(l)}</div><div class="he">${l[3]}</div>
+  <div class="row"><button onclick="hearL(${i})">🔊 האות</button><button onclick="hearW(${i})">🔊 המילה</button></div></div>
+  <div class="nav"><button class="ghost" ${i?'':'disabled'} onclick="learn(${i-1})">→ הקודמת</button><button onclick="${i<L.length-1?`learn(${i+1})`:'home()'}">${i<L.length-1?'הבאה ←':'לתפריט'}</button></div>`;
+  setTimeout(()=>hearLW(i),250);
+}
+
+// Shared answer handling for the two choice exercises
+function wire(q,after){
+  const msg=$('msg');let first=true;
+  app.querySelectorAll('.spk').forEach(b=>b.onclick=()=>{tok++;say(b.dataset.s,.8)});
+  app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+    if(b.dataset.v===q.right){
+      if(first)Q.ok++;
+      b.classList.add('ok');app.querySelectorAll('.opt').forEach(x=>x.disabled=true);win(msg,first);after();
+      const last=Q.i===Q.r.length-1,nx=()=>showNext(last?'fin()':`Q.i++;${Q.fn}()`,last?'לסיכום 🏁':'הבא ←');
+      if(q.rec)recStep(q.rec,nx);else nx();
+    }else{first=false;b.classList.add('bad');b.disabled=true;msg.textContent='לא בדיוק, נסו תשובה אחרת 🙂'}
+  });
+}
+const orow=(v,label)=>`<div class="orow"><button class="spk" data-s="${NM[v.toLowerCase()]}" aria-label="להקשיב">🔊</button><button class="opt" data-v="${v}">${label}</button></div>`;
+const TT={m:'🔗 אות גדולה ← אות קטנה',w:'🖼️ מילה ותמונה ← האות הראשונה',t:'✏️ כתיבת אותיות באצבע'};
+const top2=()=>`<div class="top"><button class="ghost" onclick="home()">→ תפריט</button><span>${Q.i+1} / ${Q.r.length}</span></div><h1 style="font-size:1.3rem">${TT[Q.mode]}</h1>`;
+
+// Capital ↔ small
+function mstart(){
+  tok++;
+  const r=sh(L).map(l=>{
+    const low=Math.random()<.5,c=l[0],up=c.toUpperCase();
+    const right=low?c:up,others=sh(L.filter(x=>x!==l)).slice(0,3).map(x=>low?x[0]:x[0].toUpperCase());
+    return{l,show:low?up:c,right,opts:sh([right,...others]),ask:low?'מצאו את האות הקטנה המתאימה':'מצאו את האות הגדולה המתאימה'};
+  });
+  Q={mode:'m',fn:'mq',r,i:0,ok:0};mq();
+}
+function mq(){
+  tok++;const q=Q.r[Q.i];
+  app.innerHTML=`${top2()}<p class="prompt">${q.ask}</p>
+  <div class="card"><div class="lt2">${q.show}</div><button class="ghost" onclick="hearL(${idx(q.l)})">🔊 להקשיב</button></div>
+  <div class="opts">${q.opts.map(o=>orow(o,o)).join('')}</div>
+  <p class="msg" id="msg"></p><div class="tr" id="tr"></div><div class="nav" id="nx"></div>`;
+  wire(q,()=>{$('tr').innerHTML=`${q.l[0].toUpperCase()} ${q.l[0]}`;hearL(idx(q.l))});
+  setTimeout(()=>hearL(idx(q.l)),250);
+}
+
+// Picture + word with highlighted first letter → which letter does it start with
+function wstart(){tok++;Q={mode:'w',fn:'wq',r:sh(L),i:0,ok:0};wq()}
+function wq(){
+  tok++;const l=Q.r[Q.i],i=idx(l);
+  const q={right:l[0]},opts=sh([l[0],...sh(L.filter(x=>x!==l)).slice(0,3).map(x=>x[0])]);
+  app.innerHTML=`${top2()}<p class="prompt">באיזו אות מתחילה המילה?</p>
+  <div class="card"><div class="pic">${l[2]}</div><div class="en2" lang="en">${hl(l)}</div>
+  <div class="row"><button onclick="hearW(${i})">🔊 המילה</button></div></div>
+  <div class="opts">${opts.map(o=>orow(o,`${o.toUpperCase()} ${o}`)).join('')}</div>
+  <p class="msg" id="msg"></p><div class="tr" id="tr"></div><div class="nav" id="nx"></div>`;
+  wire(q,()=>{$('tr').innerHTML=`${l[2]} ${l[1]} – ${l[3]}`;hearLW(i)});
+  setTimeout(()=>hearW(i),250);
+}
+
+// Recording: the child says the word; only a good match (or the fallback button when the mic is unavailable) lets them move on
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+const ALIKE={ice:['eyes','ais'],juice:['jews'],queen:['kwin'],pizza:['pitza','peetza'],xylophone:['zylophone'],kite:['kyte'],giraffe:['giraf','geraf']};
+const nrm=s=>(s||'').toLowerCase().replace(/[^a-z\s]/g,' ').replace(/\s+/g,' ').trim();
+const lev=(a,b)=>{const d=Array.from({length:a.length+1},(_,i)=>[i]);for(let j=1;j<=b.length;j++)d[0][j]=j;for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[a.length][b.length]};
+const sim=(a,b)=>!a||!b?0:1-lev(a,b)/Math.max(a.length,b.length);
+const skel=w=>w.replace(/ck|q/g,'k').replace(/ph/g,'f').replace(/[bp]/g,'p').replace(/[dt]/g,'t').replace(/[gkc]/g,'k').replace(/[vf]/g,'f').replace(/[zs]/g,'s').replace(/(.)\1+/g,'$1').replace(/[aeiouyw]/g,'');
+function score(target,alts){
+  const want=nrm(target).split(' ').filter(Boolean);let best=0;
+  for(const t of alts){const got=nrm(t).split(' ').filter(Boolean);if(!got.length)continue;
+    const parts=want.map(w=>Math.max(0,...got.map(g=>g===w||(ALIKE[w]||[]).includes(g)?1:(skel(g)&&skel(g)===skel(w))?.85:sim(w,g)*.9)));
+    best=Math.max(best,parts.reduce((a,b)=>a+b,0)/parts.length)}
+  return best;
+}
+function recStep(target,done){
+  const box=$('rec');let tries=0,blocked=!SR;
+  box.innerHTML=`<p class="prompt">עכשיו אומרים את המילה בקול 🎤</p><button class="micb" id="mic">🎤 לחצו כדי להקליט</button><p class="msg" id="rmsg"></p><div id="skip"></div>`;
+  const mic=$('mic'),rm=$('rmsg'),sk=$('skip');
+  const idle=()=>{mic.disabled=false;mic.textContent='🎤 לנסות שוב'};
+  const more=()=>{if(blocked||tries>=3){sk.innerHTML=`<button class="ghost" id="skb">${blocked?'המיקרופון לא זמין כאן – להמשיך':'לא מצליח – להמשיך'}</button>`;$('skb').onclick=()=>{sk.innerHTML='';done()}}};
+  const miss=m=>{tries++;rm.innerHTML=m;idle();more()};
+  mic.onclick=()=>{
+    if(!SR){blocked=true;rm.textContent='הדפדפן הזה לא תומך בהקלטה';more();return}
+    tok++;try{speechSynthesis.cancel()}catch(e){}
+    let r;try{r=new SR()}catch(e){blocked=true;rm.textContent='אי אפשר להקליט כאן';more();return}
+    r.lang='en-US';r.maxAlternatives=5;r.interimResults=false;
+    mic.disabled=true;mic.textContent='🎤 מקשיבים… דברו עכשיו';rm.textContent='';
+    let over=false;const t=setTimeout(()=>{try{r.stop()}catch(e){}},7000);
+    const end=f=>{if(over)return;over=true;clearTimeout(t);f()};
+    r.onresult=ev=>end(()=>{
+      const a=[...ev.results[0]].map(x=>x.transcript);
+      if(score(target,a)>=.8){mic.remove();sk.innerHTML='';win(rm,tries===0);done()}
+      else miss(`שמעתי: <b lang="en" dir="ltr">${a[0]}</b>. ננסו שוב 💪`);
+    });
+    r.onerror=e=>end(()=>{
+      if(e.error==='not-allowed'||e.error==='service-not-allowed'){blocked=true;rm.textContent='הדפדפן חוסם את המיקרופון בעמוד הזה';idle();more()}
+      else miss('לא שמעתי, נסו שוב קרוב יותר 🙉');
+    });
+    r.onend=()=>end(()=>miss('לא שמעתי, נסו שוב 🙉'));
+    try{r.start()}catch(e){end(()=>miss('אי אפשר להתחיל הקלטה'))}
+  };
+}
+
+// Missing first letter: picture + word without its first letter → pick the letter from 5 → say the word
+function xstart(){tok++;Q={mode:'x',fn:'xq',r:sh(L),i:0,ok:0};xq()}
+function xq(){
+  tok++;const l=Q.r[Q.i],i=idx(l);
+  const q={right:l[0],rec:l[1]},opts=sh([l[0],...sh(L.filter(x=>x!==l)).slice(0,4).map(x=>x[0])]);
+  app.innerHTML=`${top2()}<p class="prompt">איזו אות חסרה בתחילת המילה?</p>
+  <div class="card"><div class="pic">${l[2]}</div><div class="en2" lang="en"><span class="bl" id="bl">?</span>${l[1].slice(1)}</div><div class="he">${l[3]}</div>
+  <div class="row"><button onclick="hearW(${i})">🔊 המילה</button></div></div>
+  <div class="opts g2">${opts.map(o=>orow(o,o)).join('')}</div>
+  <p class="msg" id="msg"></p><div class="tr" id="tr"></div><div id="rec"></div><div class="nav" id="nx"></div>`;
+  wire(q,()=>{const b=$('bl');b.textContent=l[0].toUpperCase();b.style.borderBottom='0';b.classList.add('fl');$('tr').innerHTML=`${l[2]} ${l[1]} – ${l[3]}`;hearLW(i)});
+  setTimeout(()=>hearW(i),250);
+}
+
+// Writing: trace the letter with a finger; checked by how much of it is covered and how much stays inside it
+function tstart(){
+  tok++;const r=[];
+  sh(L).forEach((l,n)=>{const up=n%2===0;r.push({l,t:up?l[0].toUpperCase():l[0],k:up?'הגדולה':'הקטנה'})});
+  Q={mode:'t',fn:'tq',r,i:0,ok:0};tq();
+}
+function tq(){
+  tok++;const q=Q.r[Q.i],text=q.t,i=idx(q.l),last=Q.i===Q.r.length-1;
+  app.innerHTML=`${top2()}<p class="prompt">כתבו באצבע את האות ${q.k} ✏️</p>
+  <div class="card"><div class="trow"><button class="spk" onclick="hearL(${i})" aria-label="להקשיב">🔊</button><span style="font-size:2.6rem">${q.l[2]}</span><div class="en2" style="font-size:1.8rem" lang="en">${hl(q.l)}</div><button class="spk" onclick="hearW(${i})" aria-label="להקשיב">🔊</button></div></div>
+  <div class="cvw"><canvas id="cv"></canvas></div>
+  <div class="row"><button class="chk" id="chk">✔ בדיקה</button><button class="ghost" id="clr">🧽 למחוק</button></div>
+  <p class="msg" id="msg"></p><div class="nav" id="nx"></div>`;
+  const cv=$('cv'),msg=$('msg'),W=cv.clientWidth||320,H=200;cv.width=W;cv.height=H;
+  const cx=cv.getContext('2d'),icv=document.createElement('canvas');icv.width=W;icv.height=H;
+  const ic=icv.getContext('2d'),icw=document.createElement('canvas');icw.width=W;icw.height=H;const iw=icw.getContext('2d');
+  const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim()||'#888';
+  const font=f=>`bold ${f}px system-ui,Arial,sans-serif`,fs=Math.round(H*.7);
+  const mask=stroke=>{const c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+    x.font=font(fs);x.textAlign='center';x.textBaseline='middle';x.fillStyle=x.strokeStyle='#000';x.lineJoin='round';
+    if(stroke){x.lineWidth=stroke;x.strokeText(text,W/2,H/2)}x.fillText(text,W/2,H/2);return x.getImageData(0,0,W,H).data};
+  const tgt=mask(0),tol=mask(fs*.14),bw=Math.max(5,fs*.08),bwc=Math.max(10,fs*.16),inkc=css('--berry');
+  let fails=0,down=false,done=false,lx=0,ly=0;
+  const guide=()=>{cx.clearRect(0,0,W,H);cx.save();cx.globalAlpha=fails>=3?.55:.28;cx.fillStyle=css('--mut');cx.font=font(fs);cx.textAlign='center';cx.textBaseline='middle';cx.fillText(text,W/2,H/2);cx.restore();cx.drawImage(icv,0,0)};
+  guide();
+  const pos=e=>{const r=cv.getBoundingClientRect();return[(e.clientX-r.left)*W/r.width,(e.clientY-r.top)*H/r.height]};
+  const seg=(a,b,c,d)=>{for(const[k,w] of[[cx,bw],[ic,bw],[iw,bwc]]){k.strokeStyle=inkc;k.lineWidth=w;k.lineCap=k.lineJoin='round';k.beginPath();k.moveTo(a,b);k.lineTo(c,d);k.stroke()}};
+  cv.onpointerdown=e=>{if(done)return;down=true;[lx,ly]=pos(e);seg(lx,ly,lx,ly);try{cv.setPointerCapture(e.pointerId)}catch(x){}e.preventDefault()};
+  cv.onpointermove=e=>{if(!down||done)return;const[x,y]=pos(e);seg(lx,ly,x,y);lx=x;ly=y;e.preventDefault()};
+  cv.onpointerup=cv.onpointercancel=()=>{down=false};
+  $('clr').onclick=()=>{if(done)return;ic.clearRect(0,0,W,H);iw.clearRect(0,0,W,H);guide();msg.textContent=''};
+  $('chk').onclick=()=>{
+    if(done)return;
+    const ink=ic.getImageData(0,0,W,H).data,wide=iw.getImageData(0,0,W,H).data;let t=0,c=0,n=0,inn=0;
+    for(let k=3;k<ink.length;k+=4){const a=ink[k]>40,tg=tgt[k]>100;if(tg){t++;if(wide[k]>40)c++}if(a){n++;if(tol[k]>100)inn++}}
+    const cov=c/t,prec=n?inn/n:0;
+    if(cov>=.7&&prec>=.75){
+      done=true;$('chk').disabled=true;$('clr').disabled=true;
+      if(fails===0)Q.ok++;win(msg,fails===0);hearL(i);
+      showNext(last?'fin()':'Q.i++;tq()',last?'לסיכום 🏁':'הבאה ←');
+    }else{
+      fails++;
+      msg.textContent=n<t*.05?'עוד לא כתבתם כלום. עברו באצבע על האות 🙂':cov<.7?'כמעט! עברו על כל האות, עד הסוף ✨':'נסו להישאר בתוך האות 💪';
+      if(fails===3){guide();msg.textContent+=' (הדגשתי את האות)'}
+    }
+  };
+}
+
+function fin(){
+  const n=Q.r.length,m=Q.mode,again={m:'mstart',w:'wstart',x:'xstart',t:'tstart'}[m];
+  app.innerHTML=`<div class="big">🏆</div><h1>כל הכבוד ${NAME}!</h1><p class="sub">נכון בניסיון ראשון: ${Q.ok} מתוך ${n}</p>
+  <div class="menu"><button class="m3" onclick="${again}()">עוד סיבוב</button><button class="m1" onclick="learn(0)">חזרה ללמוד</button><button class="ghost" onclick="home()">לתפריט</button></div>`;
+}
+try{speechSynthesis.getVoices()}catch(e){}
+nameScreen();
+</script>
+</body>
+</html>

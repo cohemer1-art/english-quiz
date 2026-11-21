@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>לומדים לקרוא</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@700&family=Rubik:wght@400;500;700;800&display=swap">
+<style>
+:root{--ink:#1F2A55;--sun:#F5B700;--mint:#0E8C88;--berry:#E8502F;--sky:#2F6FE0;--grape:#6C4CE0;--bg1:#FFF7EA;--bg2:#FFE8D2;--edge:#E6D9C3}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;font-family:"Rubik","Heebo","Arial Hebrew",Arial,sans-serif;color:var(--ink);background:linear-gradient(160deg,var(--bg1),var(--bg2));background-attachment:fixed}
+#app{max-width:520px;margin:0 auto;padding:14px 14px 40px;text-align:center;min-height:calc(100vh - 150px);position:relative}
+h1{font-size:1.7rem;margin:.3em 0}
+.big{font-size:5rem;line-height:1.1}
+.sub{color:#5B6180;margin:.3em 0 .8em}
+.msg{min-height:1.4em;font-weight:700}
+button{font:inherit;font-weight:800;border:0;border-radius:18px;padding:.7em 1em;color:#fff;background:var(--grape);box-shadow:0 5px 0 rgba(0,0,0,.18);cursor:pointer;touch-action:manipulation}
+button:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.18)}
+button.ghost{background:#fff;color:var(--ink);box-shadow:0 4px 0 var(--edge)}
+button:disabled{opacity:.45}
+.menu{display:flex;flex-direction:column;gap:12px;margin:14px 0}
+.menu button{font-size:1.25rem;text-align:right;display:flex;align-items:center;gap:12px}
+.menu button small{display:block;font-weight:500;opacity:.9;font-size:.82rem}
+.menu .ic{font-size:2rem}
+.c1{background:#E8502F}.c2{background:#0E8C88}.c3{background:#2F6FE0}.c4{background:#6C4CE0}.c5{background:#D63C7A}.c6{background:#F5B700;color:#2B2200}
+input.nm{width:100%;font:inherit;font-size:1.5rem;text-align:center;padding:.6em;border-radius:18px;border:3px solid var(--edge);margin:.5em 0}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.top .stars{background:#fff;border-radius:99px;padding:.25em .8em;font-weight:800;box-shadow:0 3px 0 var(--edge)}
+.bar{height:10px;background:#fff;border-radius:99px;overflow:hidden;box-shadow:inset 0 0 0 2px #EFE3CF;flex:1}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--mint),var(--sun));width:0;transition:width .3s}
+.mascot{display:flex;align-items:center;gap:10px;background:#fff;border-radius:22px;padding:10px 14px;margin:8px 0;box-shadow:0 4px 0 var(--edge);text-align:right}
+.mascot .m{font-size:2.6rem}
+.mascot .b{font-weight:700;flex:1}
+.card{background:#fff;border-radius:26px;padding:16px;margin:10px 0;box-shadow:0 6px 0 var(--edge)}
+.letter{font-size:6.5rem;font-weight:900;line-height:1;color:var(--grape)}
+.pic{font-size:5.5rem;line-height:1.1}
+.spk{background:var(--sun);color:#2B2200;border-radius:50%;width:56px;height:56px;padding:0;font-size:1.6rem;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.spk.sm{width:42px;height:42px;font-size:1.2rem}
+.prompt{font-size:1.3rem;font-weight:800;margin:.3em 0;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.opts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+.opts.two{grid-template-columns:repeat(2,1fr)}
+.opts button{background:#fff;color:var(--ink);font-size:3rem;padding:.25em 0;box-shadow:0 5px 0 var(--edge);border-radius:20px}
+.opts button.pic2{font-size:3.6rem}
+.opts button.sy{font-size:2.6rem}
+.opts button.ok{background:#D5F0EE;box-shadow:0 5px 0 #0E8C88}
+.opts button.no{background:#FFDCD2;box-shadow:0 5px 0 #E8502F}
+.shake{animation:shake .4s}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.pop{animation:pop .5s}
+@keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+.kb{direction:ltr;display:flex;flex-direction:column;gap:6px;margin:12px -6px 0}
+.kb .row{display:flex;gap:5px;justify-content:center}
+.kb button{flex:1 1 0;min-width:0;max-width:44px;padding:.55em 0;font-size:1.3rem;background:#fff;color:var(--ink);box-shadow:0 4px 0 var(--edge);border-radius:10px}
+.kb button.hint{background:var(--sun);animation:pop .6s infinite}
+.slots{display:flex;gap:8px;justify-content:center;margin:10px 0;direction:rtl;flex-wrap:wrap}
+.slot{width:52px;height:62px;border-radius:14px;border:3px dashed #CDBFA6;background:#fff;font-size:2.2rem;font-weight:900;display:flex;align-items:center;justify-content:center;color:var(--grape)}
+.slot.f{border-style:solid;border-color:var(--mint)}
+.tiles{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:10px 0}
+.tiles button{background:#fff;color:var(--ink);font-size:2.2rem;width:58px;height:64px;padding:0;box-shadow:0 5px 0 var(--edge)}
+.tiles button.used{visibility:hidden}
+.trwrap{position:relative;margin:8px auto;width:min(86vw,340px);aspect-ratio:1;background:#fff;border-radius:26px;box-shadow:0 6px 0 var(--edge);touch-action:none}
+.trwrap canvas{position:absolute;inset:0;width:100%;height:100%;border-radius:26px;touch-action:none}
+.field{position:relative;height:52vh;min-height:330px;background:linear-gradient(#bfe8ff,#eaf9ff);border-radius:26px;overflow:hidden;margin:10px 0;box-shadow:inset 0 0 0 3px #fff}
+.fall{position:absolute;top:-80px;width:78px;height:78px;border-radius:50%;background:#fff;box-shadow:0 5px 0 var(--edge);font-size:3rem;font-weight:900;color:var(--grape);display:flex;align-items:center;justify-content:center;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(var(--h))}}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+.mc{aspect-ratio:1;font-size:2.6rem;background:var(--grape);color:#fff;border-radius:18px;display:flex;align-items:center;justify-content:center;font-weight:900;cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,.2);user-select:none}
+.mc.up{background:#fff;color:var(--ink);box-shadow:0 5px 0 var(--edge)}
+.mc.done{background:#D5F0EE;color:var(--ink);box-shadow:0 5px 0 #0E8C88}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0}
+.chips button{background:#fff;color:var(--ink);box-shadow:0 3px 0 var(--edge);padding:.4em .8em;font-size:1rem;border-radius:99px}
+.chips button.on{background:var(--grape);color:#fff}
+.score{font-size:1.3rem;font-weight:700}
+.conf{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:9}
+.conf i{position:absolute;top:-40px;font-style:normal;font-size:2rem;animation:cf 2.2s linear forwards}
+@keyframes cf{to{transform:translateY(110vh) rotate(360deg)}}
+.row2{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:10px 0}
+.vw{font-size:3.2rem;direction:rtl}
+.mini{font-size:.85rem;color:#5B6180}
+
+.brand{max-width:520px;margin:0 auto;padding:12px 14px 0;display:flex;justify-content:center}
+.wm{display:flex;align-items:flex-end;gap:2px;direction:rtl;font-family:'Fredoka','Rubik',sans-serif;font-weight:700;font-size:40px;line-height:1;background:#fff;padding:10px 18px 6px;border-radius:22px;box-shadow:0 5px 0 var(--edge)}
+.wm .lt{position:relative;display:inline-block}.wm .sp{width:10px}
+.wm .eyes{position:absolute;top:-6px;left:50%;transform:translateX(-50%);display:flex;gap:2px}
+.wm .eyes i{width:11px;height:11px;border-radius:50%;background:#fff;border:2px solid #1F2A55;box-sizing:border-box;display:flex;align-items:center;justify-content:center}
+.wm .eyes i:after{content:"";width:4px;height:4px;border-radius:50%;background:#1F2A55}
+.foot{max-width:520px;margin:0 auto;padding:6px 14px 26px;text-align:center;font-size:.8rem;color:#5B6180}
+</style>
+</head>
+<body>
+<header class="brand"><div class="wm" role="img" aria-label="כמה כיף"><span class="lt" style="color:#0E8C88">כ<span class="eyes" aria-hidden="true"><i></i><i></i></span></span><span class="lt" style="color:#E8502F">מ<span class="eyes" aria-hidden="true"><i></i><i></i></span></span><span class="lt" style="color:#F5A300">ה</span><span class="sp"></span><span class="lt" style="color:#0E8C88">כ</span><span class="lt" style="color:#6C4CE0">י</span><span class="lt" style="color:#1F2A55">ף</span></div></header>
+<div id="app"></div>
+<footer class="foot">© כל הזכויות שמורות לכמה כיף</footer>
+<script src="config.js"></script>
+<script>
+const app=document.getElementById('app');
+let C=null,NAME='',LEVEL=0,GROUP=-1,STARS=0,Q=null,KB=null;
+const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const pickN=(a,n)=>shuf(a).slice(0,n);
+const SOF={'ך':'כ','ם':'מ','ן':'נ','ף':'פ','ץ':'צ'};
+const norm=c=>SOF[c]||c;
+const nonik=s=>String(s).replace(/[֑-ׇ]/g,'');
+const $=id=>document.getElementById(id);
+
+// ---------- sound: recorded file if it exists, otherwise the browser voice ----------
+let heVoice=null;
+function loadVoices(){try{heVoice=speechSynthesis.getVoices().find(v=>/^(he|iw)/i.test(v.lang))||null}catch(e){}}
+try{loadVoices();speechSynthesis.onvoiceschanged=loadVoices}catch(e){}
+const badAudio=new Set();let curAudio=null;
+function tts(text,cb){
+  try{const u=new SpeechSynthesisUtterance(text);u.lang='he-IL';if(heVoice)u.voice=heVoice;u.rate=.8;u.pitch=1.1;
+    u.onend=()=>cb&&cb();u.onerror=()=>cb&&cb();speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){cb&&cb()}
+}
+function say(text,key,cb){
+  try{if(curAudio){curAudio.pause();curAudio=null}speechSynthesis.cancel()}catch(e){}
+  const base=(window.CONFIG||{}).AUDIO;
+  if(base&&key&&!badAudio.has(key)){
+    let used=false;const fb=()=>{if(used)return;used=true;badAudio.add(key);tts(text,cb)};
+    const a=new Audio(String(base).replace(/\/+$/,'')+'/'+key+'.mp3');curAudio=a;
+    a.onended=()=>cb&&cb();a.onerror=fb;
+    const p=a.play();if(p&&p.catch)p.catch(fb);
+    return;
+  }
+  tts(text,cb);
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-t]');if(b){e.stopPropagation();say(b.dataset.t,b.dataset.k||'')}},true);
+const spk=(t,k,cls)=>`<button class="spk ${cls||''}" data-t="${t}" data-k="${k||''}" aria-label="שמיעה">🔊</button>`;
+let AC=null;
+function tone(seq){
+  try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();let t=AC.currentTime;
+    seq.forEach(([f,d,ty])=>{const o=AC.createOscillator(),g=AC.createGain();o.type=ty||'sine';o.frequency.value=f;g.gain.setValueAtTime(.001,t);g.gain.exponentialRampToValueAtTime(.25,t+.02);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d+.02);t+=d*.8})}catch(e){}
+}
+const chime=()=>tone([[660,.12],[880,.12],[1320,.22]]);
+const bonk=()=>tone([[220,.18,'triangle'],[180,.22,'triangle']]);
+function confetti(n){const d=document.createElement('div');d.className='conf';const em=['⭐','🎉','✨','🌈','🎈'];
+  for(let i=0;i<(n||24);i++){const s=document.createElement('i');s.textContent=em[i%em.length];s.style.left=Math.random()*100+'%';s.style.animationDelay=Math.random()*.6+'s';d.appendChild(s)}
+  document.body.appendChild(d);setTimeout(()=>d.remove(),3200)}
+
+// ---------- the learner ----------
+const SKEY=()=>'kria_'+NAME;
+function loadStars(){try{STARS=+localStorage.getItem(SKEY())||0}catch(e){STARS=0}}
+function addStar(n){STARS+=n||1;try{localStorage.setItem(SKEY(),STARS)}catch(e){}}
+const LEVELS=[
+  {n:'גן',e:'🌱',d:'אותיות, צלילים, כתיבה ומקלדת',tops:['ltr','snd','trace','kbd','catch','mem']},
+  {n:'כיתה א׳',e:'🌿',d:'הברות עם ניקוד ובניית מילים',tops:['syl','bsyl','bw','tw','kbd2','mem']},
+  {n:'כיתה ב׳',e:'🌳',d:'קריאת מילים, השלמה והקלדה',tops:['rd','rd2','miss','dict','tw','catch']}
+];
+const TOP={
+  ltr:{t:'מצאו את האות',e:'🔤',c:'c1',d:'שומעים ומוצאים',f:()=>qLetter()},
+  snd:{t:'צליל ותמונה',e:'🖼️',c:'c2',d:'באיזו אות מתחילה המילה?',f:()=>qSound()},
+  trace:{t:'כותבים אותיות',e:'✍️',c:'c3',d:'מציירים באצבע',f:()=>qTrace()},
+  kbd:{t:'מקלדת: מצאו את האות',e:'⌨️',c:'c4',d:'אות זהה ואות דומה',f:()=>qKey()},
+  catch:{t:'תופסים אותיות',e:'🎈',c:'c5',d:'משחק: האות נופלת, תפסו אותה!',f:()=>qCatch()},
+  mem:{t:'משחק זיכרון',e:'🃏',c:'c6',d:'אות ותמונה',f:()=>qMem()},
+  syl:{t:'שומעים הברה',e:'👂',c:'c1',d:'ניקוד: בוחרים את ההברה',f:()=>qSyl()},
+  bsyl:{t:'בונים הברה',e:'🧩',c:'c2',d:'אות + ניקוד',f:()=>qBSyl()},
+  bw:{t:'בונים מילה',e:'🏗️',c:'c3',d:'מסדרים אותיות לפי התמונה',f:()=>qBuild()},
+  tw:{t:'מקלידים מילה',e:'⌨️',c:'c4',d:'מסתכלים בתמונה וכותבים',f:()=>qType(false)},
+  kbd2:{t:'מקלדת: מצאו את האות',e:'🔎',c:'c5',d:'אות זהה ואות דומה',f:()=>qKey()},
+  rd:{t:'קוראים עם ניקוד',e:'📖',c:'c1',d:'איזו תמונה מתאימה למילה?',f:()=>qRead(true)},
+  rd2:{t:'קוראים בלי ניקוד',e:'🧐',c:'c2',d:'מילה ללא ניקוד, בוחרים תמונה',f:()=>qRead(false)},
+  miss:{t:'האות החסרה',e:'🕵️',c:'c3',d:'משלימים אות במילה',f:()=>qMiss()},
+  dict:{t:'שומעים וכותבים',e:'📝',c:'c4',d:'המילה מוקראת, מקלידים אותה',f:()=>qType(true)}
+};
+const L=()=>C.letters; // [letter,name,word,nikud,emoji]
+const W=()=>C.words;   // [word,nikud,emoji]
+const POOLS=(()=>{return null})();
+function pool(){const all=L();if(GROUP<0)return all;const g=C.groups[GROUP];return all.filter(x=>g.includes(x[0]))}
+const letterOf=ch=>L().find(x=>x[0]===ch);
+function alikeOf(ch){return (C.alike[ch]||[]).map(norm)}
+function wordsStarting(ch){return W().filter(w=>w[0][0]===ch)}
+
+// ---------- screens ----------
+function mascot(t,speak){
+  return `<div class="mascot"><div class="m">🦉</div><div class="b" id="mb">${t}</div>${speak?spk(speak,'',"sm"):''}</div>`;
+}
+function nameScreen(){
+  app.innerHTML=`<div class="big">🦉</div><h1>${C.title}</h1><p class="sub">${C.subtitle||''}</p>
+  <p class="sub" style="font-size:1.2rem;font-weight:700">שלום! אני ינשוף. איך קוראים לך?</p>
+  <input class="nm" id="nm" placeholder="הקלידו את השם" autocomplete="off" maxlength="14">
+  <button id="go" style="font-size:1.4rem;width:100%" class="c2">יוצאים לדרך ←</button>`;
+  setTimeout(()=>say('שלום! אני ינשוף. איך קוראים לך?','hello'),300);
+  const go=()=>{const v=$('nm').value.trim();if(!v){$('nm').focus();return}NAME=v;loadStars();try{LEVEL=+localStorage.getItem(SKEY()+'_lv')||0}catch(e){}levelScreen()};
+  $('go').onclick=go;$('nm').onkeydown=e=>{if(e.key==='Enter')go()};
+}
+function levelScreen(){
+  app.innerHTML=`<div class="top"><span></span><span class="stars">⭐ ${STARS}</span></div>${mascot(`נעים מאוד ${NAME}! באיזו רמה נשחק?`,`נעים מאוד ${NAME}! באיזו רמה נשחק?`)}
+  <div class="menu">${LEVELS.map((l,i)=>`<button class="c${i+1}" data-l="${i}"><span class="ic">${l.e}</span><span>${l.n}<small>${l.d}</small></span></button>`).join('')}</div>`;
+  app.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>{LEVEL=+b.dataset.l;try{localStorage.setItem(SKEY()+'_lv',LEVEL)}catch(e){}home()});
+}
+function home(){
+  stopAll();
+  const lv=LEVELS[LEVEL];
+  app.innerHTML=`<div class="top"><button class="ghost" id="lvb" style="padding:.4em .8em">${lv.e} ${lv.n} · שינוי</button><span class="stars">⭐ ${STARS}</span></div>
+  ${mascot(`מה נעשה היום, ${NAME}?`,`מה נעשה היום, ${NAME}?`)}
+  ${LEVEL===0?`<div class="mini">אותיות היום (שלוש בכל פעם):</div><div class="chips" id="grp">${C.groups.map((g,i)=>`<button data-g="${i}" class="${GROUP===i?'on':''}">${g.join(' ')}</button>`).join('')}<button data-g="-1" class="${GROUP<0?'on':''}">הכל</button></div>`:''}
+  <div class="menu">${lv.tops.map(k=>`<button class="${TOP[k].c}" data-top="${k}"><span class="ic">${TOP[k].e}</span><span>${TOP[k].t}<small>${TOP[k].d}</small></span></button>`).join('')}</div>`;
+  $('lvb').onclick=levelScreen;
+  app.querySelectorAll('[data-top]').forEach(b=>b.onclick=()=>start(b.dataset.top));
+  app.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{GROUP=+b.dataset.g;home()});
+}
+function stopAll(){try{speechSynthesis.cancel()}catch(e){}if(curAudio){curAudio.pause();curAudio=null}KB=null;if(Q&&Q.timer){clearTimeout(Q.timer)}Q=null}
+
+// ---------- a round ----------
+function start(k){
+  const N=k==='mem'?1:(k==='catch'?6:(k==='trace'?Math.min(pool().length,6)||3:8));
+  Q={k,i:0,n:N,ok:0,first:true,items:null};
+  next();
+}
+function next(){
+  if(Q.i>=Q.n){fin();return}
+  Q.first=true;Q.locked=false;
+  TOP[Q.k].f();
+}
+function frame(inner,title){
+  const pct=Math.round(Q.i/Q.n*100);
+  app.innerHTML=`<div class="top"><button class="ghost" id="bk" style="padding:.4em .8em">→ תפריט</button><div class="bar"><i style="width:${pct}%"></i></div><span class="stars">⭐ ${STARS}</span></div>${inner}`;
+  $('bk').onclick=home;
+}
+function right(msg){
+  chime();addStar(1);if(Q.first)Q.ok++;
+  const mb=$('mb');if(mb)mb.textContent=msg||cheer();
+  say(msg||cheer(),'');
+  confetti(10);
+}
+function wrong(){Q.first=false;bonk()}
+const CH=['כל הכבוד!','יופי!','מצוין!','איזה יופי!','נהדר!','את/ה אלוף!'];
+function cheer(){return CH[Math.random()*5|0]}
+function advance(ms){const q=Q;setTimeout(()=>{if(Q!==q)return;Q.i++;next()},ms||1400)}
+function fin(){
+  const n=Q.n,k=Q.k;const stars=Q.ok;
+  confetti(40);chime();
+  const txt=k==='mem'?`מצאת את כל הזוגות!`:`ענית נכון בניסיון הראשון על <b>${Q.ok}</b> מתוך <b>${n}</b> שאלות`;
+  app.innerHTML=`<div class="big">🏆</div><h1>כל הכבוד ${NAME}!</h1><p class="score">בנושא ${TOP[k].t}:<br>${txt}</p><p class="sub">⭐ ${STARS} כוכבים בסך הכול</p>
+  <div class="menu"><button class="c2" onclick="start('${k}')">עוד סיבוב</button><button class="ghost" onclick="home()">לתפריט</button></div>`;
+  say(`כל הכבוד ${NAME}!`,'');
+}
+// ---------- helpers for questions ----------
+function items(){
+  if(!Q.items){
+    const base=['bw','tw','dict','rd','rd2','miss'].includes(Q.k)?W():pool();
+    let a=[];while(a.length<Q.n)a=a.concat(shuf(base));Q.items=a.slice(0,Q.n);
+  }
+  return Q.items;
+}
+function auto(text,key){const q=Q;setTimeout(()=>{if(Q===q)say(text,key||'')},350)}
+const lidx=t=>L().indexOf(t);
+const skey=t=>'s_'+[...t].map(ch=>ch.charCodeAt(0).toString(16)).join('-');
+function distract(ch,n){
+  const al=shuf(alikeOf(ch)).filter(c=>c!==ch);
+  const rest=shuf(L().map(x=>x[0]).filter(c=>c!==ch&&!al.includes(c)));
+  return al.concat(rest).slice(0,n);
+}
+function optsHtml(arr,cls){return `<div class="opts ${arr.length===4?'two':''}">${arr.map((o,i)=>`<button class="${cls||''}" data-i="${i}">${o}</button>`).join('')}</div>`}
+function wireOpts(ci,onRight,sayRight){
+  app.querySelectorAll('.opts button').forEach(b=>b.onclick=()=>{
+    if(Q.locked)return;const i=+b.dataset.i;
+    if(i===ci){Q.locked=true;b.classList.add('ok','pop');right();if(sayRight)setTimeout(()=>say(sayRight.t,sayRight.k),700);onRight?onRight():advance(sayRight?2200:1400)}
+    else{b.classList.add('no','shake');wrong();b.disabled=true}
+  });
+}
+function micRow(word,done){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  const row=document.createElement('div');row.className='row2';
+  row.innerHTML=(SR?'<button class="c3" id="mic">🎤 אמרו את המילה</button>':'')+'<button class="c2" id="nx">הבא ←</button>';
+  app.appendChild(row);
+  $('nx').onclick=done;
+  if(SR)$('mic').onclick=()=>{
+    const r=new SR();r.lang='he-IL';r.maxAlternatives=5;
+    r.onresult=e=>{const alts=[...e.results[0]].map(a=>nonik(a.transcript));
+      if(alts.some(a=>a.includes(word))){chime();addStar(1);$('mic').textContent='✔ מעולה!'}else $('mic').textContent='🎤 עוד פעם'};
+    r.onerror=()=>{$('mic').textContent='🎤 עוד פעם'};
+    r.onend=()=>{};
+    try{r.start();$('mic').textContent='🎙️ מקשיבה…'}catch(e){}
+  };
+}
+// on-screen Hebrew keyboard (laid out like a real one) + real keyboard
+const ROWS=['קראטוןםפ','שדגכעיחלךף','זסבהנמצתץ'];
+const kbHtml=()=>`<div class="kb">${ROWS.map(r=>`<div class="row">${[...r].map(c=>`<button data-c="${c}">${c}</button>`).join('')}</div>`).join('')}</div>`;
+function kbOn(h){KB=h;app.querySelectorAll('.kb button').forEach(b=>b.onclick=()=>h(b.dataset.c,b))}
+document.addEventListener('keydown',e=>{
+  if(!KB||e.ctrlKey||e.metaKey||e.altKey)return;
+  if(/^[א-ת]$/.test(e.key)){const b=app.querySelector(`.kb button[data-c="${e.key}"]`);if(b){b.classList.add('pop');setTimeout(()=>b.classList.remove('pop'),400)}KB(e.key,b)}
+});
+function hintKey(c){const k=app.querySelector(`.kb button[data-c="${norm(c)}"]`);if(k)k.classList.add('hint')}
+
+// ---------- gan ----------
+function qLetter(){
+  const t=items()[Q.i],i=lidx(t),ds=distract(t[0],2);
+  if(Q.i%2===0){
+    const o=shuf([t[0],...ds]);const txt=`איפה האות ${t[1]}?`;
+    frame(`${mascot('שמעו ומצאו את האות',txt)}<div class="card"><div class="prompt">${spk(txt,'f_l_'+i)} איפה האות ${t[1]}?</div></div>${optsHtml(o)}`);
+    wireOpts(o.indexOf(t[0]),null,{t:t[1],k:'l_'+i});auto(txt,'f_l_'+i);
+  }else{
+    const names=shuf([t,...ds.map(letterOf)]);const txt='איך קוראים לאות הזאת?';
+    frame(`${mascot('מה שם האות?',txt)}<div class="card"><div class="letter pop">${t[0]}</div><div class="prompt">${spk(t[1],'l_'+i)} ${txt}</div></div>${optsHtml(names.map(x=>x[1]),'sy')}`);
+    wireOpts(names.indexOf(t));auto(txt,'q_name');
+  }
+}
+function qSound(){
+  const t=items()[Q.i],i=lidx(t);
+  const mine=wordsStarting(t[0]);const w=mine[Math.random()*mine.length|0]||[t[2],t[3],t[4]];
+  if(Q.i%2===0){
+    const o=shuf([t[0],...distract(t[0],2)]);const txt='באיזו אות מתחילה המילה?';
+    frame(`${mascot('שמעו את המילה',w[1])}<div class="card"><div class="pic pop">${w[2]}</div><div class="prompt">${spk(w[1],'w_'+w[0])} ${txt}</div></div>${optsHtml(o)}<div id="after"></div>`);
+    wireOpts(o.indexOf(t[0]),()=>{
+      const q=Q;setTimeout(()=>{if(Q!==q)return;say(w[1],'w_'+w[0]);micRow(w[0],()=>{Q.i++;next()})},900);
+    });
+    auto(w[1]+'. '+txt,'q_snd_'+w[0]);
+  }else{
+    const others=W().filter(x=>x[0][0]!==t[0]&&!alikeOf(t[0]).includes(norm(x[0][0])));
+    const wr=pickN(others,2);const o=shuf([w,...wr]);const txt=`איזו תמונה מתחילה באות ${t[1]}?`;
+    frame(`${mascot('חפשו את התמונה',txt)}<div class="card"><div class="letter pop">${t[0]}</div><div class="prompt">${spk(txt,'q_pic_'+i)} ${txt}</div></div>${optsHtml(o.map(x=>x[2]),'pic2')}`);
+    wireOpts(o.indexOf(w),null,{t:w[1],k:'w_'+w[0]});auto(txt,'q_pic_'+i);
+  }
+}
+function qTrace(){
+  const t=items()[Q.i],i=lidx(t);const txt=`כתבו את האות ${t[1]}`;
+  frame(`${mascot('העבירו את האצבע על האות',txt)}<div class="prompt">${spk(t[1],'l_'+i)} האות ${t[1]}</div><div class="trwrap"><canvas id="cv"></canvas></div>
+  <div class="bar" style="margin:6px 0"><i id="cov"></i></div><div class="row2"><button class="ghost" id="clr">🧽 מוחקים ומנסים שוב</button></div>`);
+  auto(txt,'f_t_'+i);
+  const cv=$('cv'),S=Math.round(cv.parentNode.getBoundingClientRect().width)||300,dpr=Math.min(window.devicePixelRatio||1,2);
+  cv.width=cv.height=S*dpr;const ctx=cv.getContext('2d');ctx.scale(dpr,dpr);
+  const FF='Arial,"Noto Sans Hebrew","Arial Hebrew",sans-serif';
+  const R=100;
+  function mask(lw,fill){const m=document.createElement('canvas');m.width=m.height=R;const c=m.getContext('2d');c.font=`900 ${R*.72}px ${FF}`;c.textAlign='center';c.textBaseline='middle';c.fillStyle='#000';c.strokeStyle='#000';c.lineJoin='round';c.fillText(t[0],R/2,R/2+R*.03);if(lw){c.lineWidth=lw;c.strokeText(t[0],R/2,R/2+R*.03)}return c.getImageData(0,0,R,R).data}
+  const core=mask(0),wide=mask(14);
+  let coreN=0;for(let k=3;k<core.length;k+=4)if(core[k]>128)coreN++;
+  function ghost(){ctx.clearRect(0,0,S,S);ctx.font=`900 ${S*.72}px ${FF}`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#e2e5f7';ctx.fillText(t[0],S/2,S/2+S*.03)}
+  ghost();
+  let strokes=[],cur=null;
+  function evalDraw(){
+    const m=document.createElement('canvas');m.width=m.height=R;const c=m.getContext('2d');c.lineCap='round';c.lineJoin='round';c.strokeStyle='#000';
+    const draw=lw=>{c.clearRect(0,0,R,R);c.lineWidth=lw;strokes.forEach(s=>{c.beginPath();s.forEach((p,j)=>j?c.lineTo(p[0]*R,p[1]*R):c.moveTo(p[0]*R,p[1]*R));if(s.length===1)c.lineTo(s[0][0]*R+.1,s[0][1]*R);c.stroke()});return c.getImageData(0,0,R,R).data};
+    const thick=draw(13);let cov=0;for(let k=3;k<core.length;k+=4)if(core[k]>128&&thick[k]>40)cov++;
+    const thin=draw(3);let tot=0,inn=0;for(let k=3;k<thin.length;k+=4)if(thin[k]>40){tot++;if(wide[k]>128)inn++}
+    return {cov:coreN?cov/coreN:0,prec:tot?inn/tot:0};
+  }
+  const pt=e=>{const r=cv.getBoundingClientRect();return [(e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height]};
+  function seg(a,b){ctx.strokeStyle='#7a5cff';ctx.lineWidth=6;ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();ctx.moveTo(a[0]*S,a[1]*S);ctx.lineTo(b[0]*S,b[1]*S);ctx.stroke()}
+  cv.onpointerdown=e=>{if(Q.locked)return;e.preventDefault();try{cv.setPointerCapture(e.pointerId)}catch(_){}cur=[pt(e)];strokes.push(cur);seg(cur[0],cur[0])};
+  cv.onpointermove=e=>{if(!cur)return;e.preventDefault();const p=pt(e);seg(cur[cur.length-1],p);cur.push(p)};
+  const up=()=>{
+    if(!cur)return;cur=null;const r=evalDraw();
+    $('cov').style.width=Math.min(100,Math.round(r.cov/.62*100))+'%';
+    if(r.cov>=.62&&r.prec>=.72&&!Q.locked){Q.locked=true;right('איזו כתיבה יפה!');advance(1500)}
+    else if(r.cov>=.62&&r.prec<.72){$('mb').textContent='כמעט! נסו להישאר על האות. אפשר למחוק ולנסות שוב'}
+  };
+  cv.onpointerup=up;cv.onpointercancel=up;
+  $('clr').onclick=()=>{if(Q.locked)return;strokes=[];cur=null;ghost();$('cov').style.width='0';if(Q.first)wrong()};
+}
+function qKey(){
+  const t=items()[Q.i],i=lidx(t);
+  const sim=(Q.i%2===1)&&alikeOf(t[0]).length>0;
+  const okSet=sim?alikeOf(t[0]):[norm(t[0])];
+  const txt=sim?'מצאו במקלדת אות שדומה בצורה לאות הזאת':`מצאו במקלדת את האות ${t[1]}`;
+  frame(`${mascot(sim?'חפשו אות דומה':'חפשו את האות במקלדת',txt)}<div class="card"><div class="letter pop">${t[0]}</div><div class="prompt">${spk(txt,'k_'+(sim?'s':'f')+'_'+i)}</div></div><div class="msg" id="hh"></div>${kbHtml()}<p class="mini">אפשר גם להקליד במקלדת אמיתית (בעברית)</p>`);
+  auto(txt,'k_'+(sim?'s':'f')+'_'+i);
+  let wr=0;
+  kbOn((c,b)=>{
+    if(Q.locked)return;const n=norm(c);
+    if(okSet.includes(n)){Q.locked=true;if(b)b.classList.add('pop');right(sim?`נכון! ${c} דומה ל־${t[0]}`:null);advance(1600)}
+    else{wrong();if(b)b.classList.add('shake');wr++;$('hh').textContent=wr>=2?'רמז: המקש הצהוב':'כמעט, נסו עוד';if(b)setTimeout(()=>b.classList.remove('shake'),400);if(wr>=2)hintKey(okSet[0])}
+  });
+}
+function qCatch(){
+  const t=items()[Q.i],i=lidx(t);const txt=`תפסו את האות ${t[1]}`;
+  const lets=shuf([t[0],...distract(t[0],2)]);
+  frame(`${mascot('תפסו אותה לפני שהיא נופלת!',txt)}<div class="field" id="fld"></div>`);
+  auto(txt,'f_c_'+i);
+  const fld=$('fld'),H=fld.clientHeight+90;const q=Q;
+  lets.forEach((c,k)=>{
+    const d=document.createElement('div');d.className='fall';d.textContent=c;d.style.left=(5+k*33)+'%';d.style.setProperty('--h',H+'px');
+    d.style.animationDuration=(7.5+k*.5)+'s';d.style.animationDelay=(k*.9)+'s';
+    d.onpointerdown=e=>{e.preventDefault();if(Q!==q||Q.locked)return;
+      if(c===t[0]){Q.locked=true;d.style.background='#c9f5e7';d.classList.add('pop');fld.querySelectorAll('.fall').forEach(x=>x.style.animationPlayState='paused');right();advance(1400)}
+      else{wrong();d.style.opacity='.35';d.style.pointerEvents='none'}};
+    if(c===t[0])d.onanimationend=()=>{if(Q!==q||Q.locked)return;Q.locked=true;wrong();$('mb').textContent='כמעט! ננסה את הבאה';say(`זו האות ${t[1]}`,'l_'+i);advance(1800)};
+    fld.appendChild(d);
+  });
+}
+function qMem(){
+  let ls=shuf(pool());ls=ls.length>=6?ls.slice(0,6):ls.concat(shuf(L().filter(x=>!ls.includes(x)))).slice(0,6);
+  const cards=shuf(ls.flatMap(l=>[{id:l[0],t:'l',f:l[0],s:l[1],k:'l_'+lidx(l)},{id:l[0],t:'p',f:l[4],s:l[3],k:'w_'+l[2]}]));
+  frame(`${mascot('מצאו אות ותמונה שמתחילה בה','מצאו אות ותמונה שמתחילה בה')}<div class="grid" id="g">${cards.map((c,i)=>`<div class="mc" data-i="${i}">?</div>`).join('')}</div><div class="msg" id="mm"></div>`);
+  auto('מצאו אות ותמונה שמתחילה בה','q_mem');
+  let open=[],found=0,wr=0;const q=Q;
+  app.querySelectorAll('.mc').forEach(el=>el.onclick=()=>{
+    if(Q!==q||el.classList.contains('up')||el.classList.contains('done')||open.length>=2)return;
+    const c=cards[+el.dataset.i];el.textContent=c.f;el.classList.add('up');say(c.s,c.k);open.push([el,c]);
+    if(open.length===2){
+      const [a,b]=open;
+      if(a[1].id===b[1].id&&a[1].t!==b[1].t){
+        a[0].classList.replace('up','done');b[0].classList.replace('up','done');open=[];found++;chime();addStar(1);
+        if(found===6)setTimeout(()=>{if(Q!==q)return;Q.i=Q.n;fin()},900);
+      }else{wr++;bonk();setTimeout(()=>{if(Q!==q)return;[a,b].forEach(x=>{x[0].classList.remove('up');x[0].textContent='?'});open=[]},1100)}
+    }
+  });
+}
+
+// ---------- first grade: nikud ----------
+function randSyl(excl){
+  for(let n=0;n<50;n++){
+    const c=C.syl.cons[Math.random()*C.syl.cons.length|0],v=C.syl.vowels[Math.random()*C.syl.vowels.length|0];
+    if(!excl||!excl.some(x=>x.c===c&&x.g===v[1]))return {c,v:v[0],g:v[1],t:c+v[0]};
+  }
+}
+const vdisp=v=>v==='וּ'?'וּ':'◌'+v;
+function qSyl(){
+  const t=randSyl();const o=[t];while(o.length<4){const s=randSyl(o);if(!o.some(x=>x.t===s.t))o.push(s)}
+  const opts=shuf(o);const txt='שמעו את ההברה ובחרו אותה';
+  frame(`${mascot('הקשיבו היטב',txt)}<div class="card"><div class="big">👂</div><div class="prompt">${spk(t.t,skey(t.t),'')} ${txt}</div></div>${optsHtml(opts.map(x=>x.t),'sy')}`);
+  wireOpts(opts.indexOf(t),null,{t:t.t,k:skey(t.t)});auto(t.t,skey(t.t));
+}
+function qBSyl(){
+  const t=randSyl();
+  const cs=shuf([t.c,...pickN(C.syl.cons.filter(c=>c!==t.c),3)]);
+  const vs=shuf([C.syl.vowels.find(v=>v[0]===t.v),...pickN(C.syl.vowels.filter(v=>v[1]!==t.g),3)]);
+  let selC=null,selV=null;const txt='בנו את ההברה ששמעתם';
+  frame(`${mascot('בחרו אות ואז ניקוד',txt)}<div class="card"><div class="prompt">${spk(t.t,skey(t.t))} ${txt}</div><div class="letter" id="pv" style="font-size:5rem">◌</div></div>
+  <div class="mini">אות</div><div class="opts two" id="oc">${cs.map((c,i)=>`<button data-i="${i}">${c}</button>`).join('')}</div>
+  <div class="mini">ניקוד</div><div class="opts two" id="ov">${vs.map((v,i)=>`<button data-i="${i}">${vdisp(v[0])}</button>`).join('')}</div>`);
+  auto(t.t,skey(t.t));
+  const upd=()=>{$('pv').textContent=(selC||'◌')+(selV?selV[0]:'');
+    if(selC&&selV){
+      if(selC===t.c&&selV[1]===t.g){Q.locked=true;right();say(t.t,skey(t.t));advance(1700)}
+      else{wrong();$('pv').classList.add('shake');setTimeout(()=>{$('pv').classList.remove('shake');selC=null;selV=null;upd();app.querySelectorAll('.opts button').forEach(b=>b.classList.remove('ok'))},700)}}};
+  app.querySelectorAll('#oc button').forEach((b,i)=>b.onclick=()=>{if(Q.locked)return;app.querySelectorAll('#oc button').forEach(x=>x.classList.remove('ok'));b.classList.add('ok');selC=cs[i];upd()});
+  app.querySelectorAll('#ov button').forEach((b,i)=>b.onclick=()=>{if(Q.locked)return;app.querySelectorAll('#ov button').forEach(x=>x.classList.remove('ok'));b.classList.add('ok');selV=vs[i];upd()});
+}
+function qBuild(){
+  const w=items()[Q.i];const word=[...w[0]];
+  const txt='סדרו את האותיות כדי לבנות את המילה';
+  const tiles=shuf(word.map((c,i)=>({c,i})));
+  frame(`${mascot('איזו מילה מסתתרת בתמונה?',w[1])}<div class="card"><div class="pic pop">${w[2]}</div><div class="prompt">${spk(w[1],'w_'+w[0])} ${txt}</div></div>
+  <div class="slots" id="sl">${word.map(()=>'<div class="slot"></div>').join('')}</div><div class="tiles" id="tl">${tiles.map((t,i)=>`<button data-i="${i}">${t.c}</button>`).join('')}</div>`);
+  auto(w[1]+'. '+txt,'q_bw_'+w[0]);
+  let pos=0;const slots=app.querySelectorAll('.slot');
+  app.querySelectorAll('#tl button').forEach((b,i)=>b.onclick=()=>{
+    if(Q.locked||b.classList.contains('used'))return;
+    if(norm(tiles[i].c)===norm(word[pos])){slots[pos].textContent=tiles[i].c;slots[pos].classList.add('f','pop');b.classList.add('used');say(tiles[i].c,'');pos++;
+      if(pos===word.length){Q.locked=true;right();setTimeout(()=>say(w[1],'w_'+w[0]),900);advance(2400)}}
+    else{wrong();b.classList.add('shake');setTimeout(()=>b.classList.remove('shake'),400)}
+  });
+}
+function qType(dict){
+  const w=items()[Q.i];const word=[...w[0]];
+  const txt=dict?'שמעו את המילה והקלידו אותה':'מה כתוב בתמונה? הקלידו את המילה';
+  frame(`${mascot(dict?'הקשיבו והקלידו':'הסתכלו והקלידו',dict?w[1]:txt)}<div class="card"><div class="pic" id="pc">${dict?'🎧':w[2]}</div><div class="prompt">${spk(w[1],'w_'+w[0])} ${txt}</div></div>
+  <div class="slots" id="sl">${word.map(()=>'<div class="slot"></div>').join('')}</div>${kbHtml()}`);
+  auto(dict?w[1]:w[1]+'. '+txt,dict?'q_dict_'+w[0]:'q_tw_'+w[0]);
+  let pos=0,wr=0;const slots=app.querySelectorAll('.slot');
+  kbOn((c,b)=>{
+    if(Q.locked)return;
+    if(norm(c)===norm(word[pos])){slots[pos].textContent=word[pos];slots[pos].classList.add('f','pop');pos++;wr=0;app.querySelectorAll('.kb .hint').forEach(x=>x.classList.remove('hint'));
+      if(pos===word.length){Q.locked=true;if(dict)$('pc').textContent=w[2];right();setTimeout(()=>say(w[1],'w_'+w[0]),900);advance(2400)}}
+    else{wrong();if(b){b.classList.add('shake');setTimeout(()=>b.classList.remove('shake'),400)}wr++;if(wr>=2)hintKey(word[pos])}
+  });
+}
+
+// ---------- second grade ----------
+function qRead(nikud){
+  const w=items()[Q.i];
+  const others=W().filter(x=>x[2]!==w[2]&&x[0][0]!==w[0][0]);const o=shuf([w,...pickN(others,2)]);
+  const txt='קראו את המילה ובחרו את התמונה';
+  frame(`${mascot('קראו בשקט ואז בחרו',w[1])}<div class="card"><div class="vw">${nikud?w[1]:w[0]}</div><div class="prompt">${spk(w[1],'w_'+w[0],'sm')} ${txt}</div></div>${optsHtml(o.map(x=>x[2]),'pic2')}`);
+  wireOpts(o.indexOf(w),null,{t:w[1],k:'w_'+w[0]});
+}
+function qMiss(){
+  const w=items()[Q.i];const word=[...w[0]];const mi=Q.i%3===0?0:(Math.random()*word.length|0);
+  const t=word[mi];const o=shuf([norm(t),...distract(norm(t),3)]);
+  const txt='איזו אות חסרה במילה?';
+  frame(`${mascot('השלימו את המילה',w[1])}<div class="card"><div class="pic pop">${w[2]}</div><div class="prompt">${spk(w[1],'w_'+w[0])} ${txt}</div>
+  <div class="slots">${word.map((c,i)=>`<div class="slot ${i===mi?'':'f'}" id="s${i}">${i===mi?'?':c}</div>`).join('')}</div></div>${optsHtml(o)}`);
+  wireOpts(o.indexOf(norm(t)),()=>{const s=$('s'+mi);s.textContent=t;s.classList.add('f','pop');advance(1800)},{t:w[1],k:'w_'+w[0]});
+  auto(w[1]+'. '+txt,'q_miss_'+w[0]);
+}
+
+// ---------- access code gate ----------
+const CFG=window.CONFIG||{};
+const API=String(CFG.API||'').replace(/\/+$/,'');
+const CONTACT=CFG.CONTACT||'';
+const QID=new URLSearchParams(location.search).get('q')||'';
+const DEV=(()=>{try{let d=localStorage.getItem('dev');if(!d){d=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():(Date.now().toString(36)+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2)+'0000000000');localStorage.setItem('dev',d)}return d}catch(e){return null}})();
+const ERR={
+  invalid:'הקוד לא נמצא. בדקו שהעתקתם אותו בדיוק כפי שנשלח אליכם.',
+  refunded:'הרכישה הזו בוטלה או הוחזרה, ולכן הקוד כבר לא פעיל.',
+  in_use:'הקוד הזה כבר הופעל בטלפון אחר, ואפשר להשתמש בו רק בטלפון אחד. אם החלפתם טלפון או דפדפן – פנו אלינו ונאפס את הקוד.',
+  unavailable:'אין חיבור לשרת כרגע. בדקו שיש אינטרנט ונסו שוב בעוד רגע.',
+  unknown_quiz:'הקישור הזה אינו תקין. פתחו את הקישור שקיבלתם לאחר הרכישה.',
+  bad_device:'הדפדפן לא מאפשר לשמור נתונים. פתחו את הקישור בדפדפן רגיל (Chrome).',
+  server_error:'משהו השתבש אצלנו. נסו שוב בעוד רגע.',
+  server_not_configured:'השרת עדיין לא הוגדר עד הסוף.'
+};
+const errText=e=>(ERR[e]||ERR.server_error)+(CONTACT&&(e==='in_use'||e==='server_error')?`<br><b>${CONTACT}</b>`:'');
+async function callApi(path,body){
+  try{
+    const r=await fetch(API+path,body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:undefined);
+    return await r.json();
+  }catch(e){return {ok:false,error:'unavailable'}}
+}
+function boot(c){C=c;if(c.title)document.title=c.title;nameScreen()}
+function loading(t){app.innerHTML=`<div class="big">⏳</div><p class="sub">${t||'בודקים…'}</p>`}
+function problem(title,html){app.innerHTML=`<div class="big">⚠️</div><h1>${title}</h1><p class="sub" style="color:inherit">${html}</p>`}
+async function activate(key,silent){
+  loading('בודקים את הקוד…');
+  const r=await callApi('/activate',{quiz:QID,key,device:DEV});
+  if(r&&r.ok&&r.content){try{localStorage.setItem('lic_'+QID,key)}catch(e){}boot(r.content);return}
+  if(!silent||r.error==='in_use'||r.error==='refunded'){try{localStorage.removeItem('lic_'+QID)}catch(e){}}
+  if(r.error==='unavailable'&&silent){
+    app.innerHTML=`<div class="big">📡</div><p class="sub" style="color:inherit">${errText('unavailable')}</p><button id="retry">נסו שוב</button>`;
+    document.getElementById('retry').onclick=()=>activate(key,true);return;
+  }
+  gateScreen(errText(r.error),key);
+}
+function gateScreen(msg,prefill){
+  app.innerHTML=`<div class="big">🔑</div><h1>הכניסו את קוד הגישה</h1><p class="sub">הקוד נשלח אליכם במייל אחרי הרכישה</p>
+  <input class="nm" id="code" dir="ltr" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXXXXXX-XXXXXXXX-XXXXXXXX-XXXXXXXX" style="font-size:1.05rem">
+  <p class="msg" id="cmsg" style="color:var(--berry)">${msg||''}</p><button id="cgo" style="font-size:1.3rem">כניסה ←</button>
+  <p class="sub" style="font-size:.85rem">הקוד פועל בטלפון אחד בלבד. כדאי לפתוח תמיד באותו דפדפן.</p>`;
+  document.getElementById('code').value=prefill||'';
+  const go=()=>{const v=document.getElementById('code').value.trim();if(v.length<8){document.getElementById('cmsg').textContent='צריך להקליד את הקוד 🙂';return}activate(v,false)};
+  document.getElementById('cgo').onclick=go;
+  document.getElementById('code').onkeydown=e=>{if(e.key==='Enter')go()};
+}
+async function picker(){
+  loading('טוענים…');
+  const r=await callApi('/catalog');
+  if(!r.ok||!r.quizzes||!r.quizzes.length){problem('אין מבדקים להצגה',errText(r.error||'unavailable'));return}
+  app.innerHTML=`<h1>בחרו מבדק</h1><div class="menu">${r.quizzes.map(q=>`<button class="m1" data-q="${String(q.id).replace(/[^A-Za-z0-9_-]/g,'')}">${String(q.title).replace(/[<>&]/g,'')}</button>`).join('')}</div>`;
+  app.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>{location.search='?q='+b.dataset.q});
+}
+function gate(){
+  if(!API||/REPLACE/i.test(API)){problem('צריך להגדיר את כתובת השרת','פותחים את הקובץ config.js ומדביקים בו את כתובת השרת.');return}
+  if(!DEV){problem('אי אפשר להמשיך',errText('bad_device'));return}
+  if(!QID){picker();return}
+  let saved=null;try{saved=localStorage.getItem('lic_'+QID)}catch(e){}
+  if(saved)activate(saved,true);else gateScreen('');
+}
+gate();
+</script>
+</body>
+</html>
